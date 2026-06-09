@@ -3775,7 +3775,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   function txnRowHtml(t) {
     var sign = t.type === 'income' ? '+' : '−';
-    var formattedAmt = fmtMoney(t.amountCHF || 0);
+    // Show the original entered amount + currency so 20 000 HUF always
+    // reads "HUF 20 000", regardless of the NW display currency.
+    var enteredAmt = Number(t.amount) || 0;
+    var enteredCcy = t.currency || 'CHF';
+    var formattedAmt = enteredCcy + ' ' + enteredAmt.toLocaleString('en-US', {
+      minimumFractionDigits: enteredAmt % 1 === 0 ? 0 : 2,
+      maximumFractionDigits: 2
+    });
     var dateLabel = '';
     if (t.date) {
       var d = new Date(t.date + 'T00:00:00');
