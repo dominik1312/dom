@@ -1790,8 +1790,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <span style="font-size:11px;color:var(--text-tertiary)">CHF</span>
         <select id="netWorthCurrency" style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;font-family:inherit;cursor:pointer">
           <option value="CHF">CHF</option>
-          <option value="USD">USD</option>
           <option value="EUR">EUR</option>
+          <option value="USD">USD</option>
           <option value="GBP">GBP</option>
           <option value="HUF">HUF</option>
         </select>
@@ -2110,7 +2110,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       <select id="txnAccount" class="txn-select">
         <option value="">No linked account</option>
       </select>
-      <button id="txnAddBtn" class="txn-add-btn expense" type="button">+ Add Expense</button>
+      <button id="txnAddBtn" class="txn-add-btn expense" type="button" onclick="window.__txnAdd && window.__txnAdd()">+ Add Expense</button>
     </div>
   </div>
 
@@ -2210,7 +2210,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   const netWorthTotal = document.getElementById('netWorthTotal');
   const netWorthBreakdown = document.getElementById('netWorthBreakdown');
 
-  let exchangeRates = { CHF: 1, USD: 1, EUR: 1, GBP: 1 };
+  let exchangeRates = { CHF: 1, USD: 1, EUR: 1, GBP: 1, HUF: 1 };
   async function loadExchangeRates() {
     try {
       const res = await fetch('https://open.er-api.com/v6/latest/CHF');
@@ -2220,7 +2220,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           CHF: 1,
           USD: data.rates.USD || 1,
           EUR: data.rates.EUR || 1,
-          GBP: data.rates.GBP || 1
+          GBP: data.rates.GBP || 1,
+          HUF: data.rates.HUF || 1
         };
         renderAllNetWorth();
         if (typeof renderSubs === 'function') renderSubs();
@@ -3880,7 +3881,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     populateTxnCategorySelect('expense');
 
-    if (addBtn) addBtn.addEventListener('click', doAddTransaction);
+    window.__txnAdd = doAddTransaction;
+    if (addBtn) addBtn.onclick = doAddTransaction;
 
     ['txnDesc','txnAmount'].forEach(function(id) {
       var el = document.getElementById(id);
