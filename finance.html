@@ -2225,6 +2225,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         };
         renderAllNetWorth();
         if (typeof renderSubs === 'function') renderSubs();
+        if (typeof renderTransactions === 'function') renderTransactions();
       }
     } catch (e) {}
   }
@@ -2359,6 +2360,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     if (typeof renderOrders   === 'function') renderOrders();
     if (typeof updateOrdPreview === 'function') updateOrdPreview();
     if (typeof populateTxnAccountSelect === 'function') populateTxnAccountSelect();
+    if (typeof renderTransactions === 'function') renderTransactions();
   }
 
   // ============================================================
@@ -2865,10 +2867,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // Idempotent via `lastDeductedAt` so refreshing the page doesn't
   // double-charge.
   // ============================================================
+  // Session flag: track the last calendar date we ran auto-deduct so that
+  // a cloud-sync applyRemote rolling back `lastDeductedAt` cannot trigger
+  // a second deduction within the same browser session on the same day.
+  let _autoDeductLastRanDate = null;
+
   function processAutoDeductSubs() {
     const items = storeGet('subs') || [];
     if (!items.length) return false;
     const now = new Date();
+    const todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+    if (_autoDeductLastRanDate === todayStr) return false;
+    _autoDeductLastRanDate = todayStr;
     const todayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
     let changed = false;
     items.forEach(it => {
@@ -2916,7 +2926,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const periodOpts = ['monthly','yearly','weekly'].map(p =>
       '<option value="' + p + '"' + (p === it.period ? ' selected' : '') + '>' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>'
     ).join('');
-    const ccyOpts = ['CHF','USD','EUR','GBP'].map(c =>
+    const ccyOpts = ['CHF','USD','EUR','GBP','HUF'].map(c =>
       '<option value="' + c + '"' + (c === enteredCcy ? ' selected' : '') + '>' + c + '</option>'
     ).join('');
     // Build From-account options from the live NW accounts
