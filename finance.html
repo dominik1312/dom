@@ -1756,6 +1756,66 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .txn-add-grid .txn-add-btn { grid-column: 1 / -1; }
   .txn-add-grid .date-field input[type="date"] { font-size: 15px !important; }
 }
+
+/* ============================================================
+   MOBILE — all fixes scoped to ≤600px.
+   Desktop layout is untouched (zero rules apply above 600px).
+   ============================================================ */
+@media (max-width: 600px) {
+
+  /* ── 1. Bottom tab bar ────────────────────────────────────────
+     At 390px each tab is ~70px wide. The original 14px side padding
+     left only 42px inner area — not enough for "TRANSACTIONS" at
+     10px with 0.10em tracking. Shrinking side padding to 4px gives
+     62px inner area; dropping the label to 8px / 0.04em spacing
+     fits all five labels on a single line without wrapping.        */
+  .bot-tab {
+    padding: 8px 4px 7px;
+  }
+  .bot-tab-icon {
+    font-size: 16px;
+  }
+  .bot-tab-label {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── 2. Shell bottom clearance ───────────────────────────────
+     On notched phones env(safe-area-inset-bottom) ≈ 34px adds to
+     the tab bar height. 110px guarantees content clears the bar.   */
+  .shell {
+    padding-bottom: 110px;
+  }
+
+  /* ── 3. Subscription rows ────────────────────────────────────
+     Inline grid has gap:12px; on 375–390px phones this wastes
+     space in the 3-column layout. Override to 8px so the name
+     column keeps enough room.                                       */
+  .sub-row {
+    gap: 8px !important;
+    padding: 10px 10px !important;
+  }
+
+  /* ── 4. Subs add row — date label full-width ─────────────────
+     The existing @media (max-width:600px) makes inputs/selects/
+     buttons 100% wide, but label.date-field (with inline
+     min-width:150px) was missed. !important overrides inline.      */
+  [data-section="subs"] .quick-add label.date-field {
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  /* ── 5. Wishlist hero total row ──────────────────────────────
+     No flex-wrap means very large totals (e.g. HUF 2,000,000 at
+     32px) can overflow alongside the right-side percentage. Allow
+     wrapping so the two halves stack instead of clipping.           */
+  .wish-hero-top {
+    flex-wrap: wrap;
+  }
+  .wish-hero-num {
+    font-size: 27px;
+  }
+}
 </style>
 </head>
 <body>
