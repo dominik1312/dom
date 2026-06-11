@@ -2784,10 +2784,24 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         metaLine;
       const cost = document.createElement('div');
       cost.style.cssText = 'text-align:right;line-height:1.1';
-      const bigNum = fmtMoney(m);
-      const origHint = (it.entered_currency && it.entered_currency !== 'CHF' && it.entered_amount != null)
+      // Big number: always show in the currency the user entered.
+      // For non-CHF subs, compute the per-month equivalent in the original
+      // currency so "60 000 HUF/year" shows "HUF 5 000 / month".
+      let bigNum;
+      if (it.entered_currency && it.entered_currency !== 'CHF' && it.entered_amount != null) {
+        const enteredMonthly = it.period === 'yearly' ? Number(it.entered_amount) / 12
+                             : it.period === 'weekly' ? Number(it.entered_amount) * 4.345
+                             : Number(it.entered_amount);
+        bigNum = it.entered_currency + ' ' + enteredMonthly.toLocaleString('en-US', {
+          minimumFractionDigits: enteredMonthly % 1 === 0 ? 0 : 2, maximumFractionDigits: 2
+        });
+      } else {
+        bigNum = fmtMoney(m);
+      }
+      // "Billed" hint: original billing cadence for non-monthly or non-CHF
+      const origHint = (it.entered_currency && it.entered_currency !== 'CHF' && it.entered_amount != null && it.period !== 'monthly')
         ? '<div style="font-size:10px;color:var(--text-tertiary);margin-top:2px">billed ' + it.entered_currency + ' ' + Number(it.entered_amount).toLocaleString('en-US', { minimumFractionDigits: it.entered_amount % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 }) + ' / ' + it.period + '</div>'
-        : (it.period !== 'monthly'
+        : (it.period !== 'monthly' && !(it.entered_currency && it.entered_currency !== 'CHF')
             ? '<div style="font-size:10px;color:var(--text-tertiary);margin-top:2px">billed ' + fmtMoney(it.amount) + ' / ' + it.period + '</div>'
             : '');
       cost.innerHTML = '<div style="font-size:20px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums">' + bigNum + '</div>' +
@@ -3553,11 +3567,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const next = nextRenewalDate(s.renewal, s.period);
       if (!next) return;
       const days = Math.round((next.getTime() - today) / 86400000);
-      // Use the period-local cost for what the user actually pays at renewal,
-      // not the monthlyEquivalent — this ticker shows "what's about to hit".
+      // Use the period-local cost for what the user actually pays at renewal.
       out.push({
         name: s.name,
         amount: Number(s.amount) || 0,
+        enteredAmount: s.entered_amount,
+        enteredCcy: s.entered_currency,
         days,
         period: s.period
       });
@@ -3617,7 +3632,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             : 'in ' + e.days + 'd';
       return '<div class="ticker-item' + (i === tickerIdx ? ' active' : '') + '" data-i="' + i + '">'
         +   '<span class="ticker-item-name">' + escapeHtml(e.name) + '</span>'
-        +   '<span class="ticker-item-amt">' + fmtMoney(e.amount) + '</span>'
+        +   '<span class="ticker-item-amt">' + (e.enteredCcy && e.enteredCcy !== 'CHF' && e.enteredAmount != null
+              ? e.enteredCcy + ' ' + Number(e.enteredAmount).toLocaleString('en-US', { minimumFractionDigits: e.enteredAmount % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 })
+              : fmtMoney(e.amount)) + '</span>'
         +   '<span class="ticker-item-days">' + daysLabel + '</span>'
         + '</div>';
     }).join('');
