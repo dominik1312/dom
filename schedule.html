@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Day Planner</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="sync.js" defer></script>
+<script src="topbar.js" defer></script>
+<style>
+  :root{
+    --text-primary:#FAFAFA;
+    --text-secondary:#B8B6B0;
+    --text-tertiary:#76746E;
+    --success:#6BE3A4;
+    --warning:#F2C063;
+    --danger:#FF6B6B;
+
+    --card:rgba(255,255,255,0.04);
+    --hairline:rgba(255,255,255,0.06);
+
+    --gutter:58px;
+    --hour-px:64px;
+
+    --font:-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{ background:#050506; }
+
+  /* body is a normal block so topbar.js can inject the sticky header above .wrap */
+  body{
+    font-family:var(--font);
+    color:var(--text-primary);
+    min-height:100vh;
+    padding: max(16px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right)) 80px max(18px, env(safe-area-inset-left));
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  body::before{
+    content:'';
+    position:fixed; inset:-20%;
+    background:
+      radial-gradient(40% 36% at 82% 14%, rgba(224,118,88,0.16), transparent 70%),
+      radial-gradient(46% 40% at 18% 90%, rgba(180,180,200,0.06), transparent 70%);
+    filter:blur(40px);
+    z-index:-2;
+    animation:drift 36s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  body::after{
+    content:'';
+    position:fixed; inset:0;
+    background-image:radial-gradient(rgba(255,255,255,0.014) 1px, transparent 1px);
+    background-size:3px 3px;
+    z-index:-1;
+    pointer-events:none;
+  }
+  @keyframes drift{ from{ transform:translate3d(-1.5%,-1%,0);} to{ transform:translate3d(1.5%,1.5%,0);} }
+
+  .wrap{ width:100%; max-width:1100px; margin:0 auto; }
+
+  /* section eyebrow — matches dashboard style */
+  .section-title{
+    font-size:10.5px; font-weight:700;
+    letter-spacing:0.18em; text-transform:uppercase;
+    color:var(--text-tertiary);
+    display:flex; align-items:center; gap:12px;
+    margin:0 0 14px 2px;
+  }
+  .section-title::before{ content:''; width:18px; height:1px; background:var(--text-tertiary); opacity:0.6; }
+  .section-title::after{ content:''; flex:1; height:1px; background:linear-gradient(90deg, rgba(255,255,255,0.08), transparent); }
+
+  /* card chassis */
+  .cal-card{
+    background:var(--card);
+    border-radius:16px;
+    padding:20px;
+    backdrop-filter:blur(24px) saturate(1.2);
+    -webkit-backdrop-filter:blur(24px) saturate(1.2);
+    box-shadow:0 12px 40px rgba(0,0,0,0.45);
+  }
+
+  /* header */
+  .cal-head{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .cal-date{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .cal-date-main{ font-size:17px; font-weight:700; letter-spacing:-0.02em; }
+  .cal-date-sub{ font-family:var(--mono); font-size:11px; color:var(--text-tertiary); letter-spacing:0.02em; }
+
+  .cal-nav{ display:flex; align-items:center; gap:6px; margin-left:auto; }
+  .cal-nav button{
+    font-family:var(--font);
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--hairline);
+    color:var(--text-secondary);
+    border-radius:10px;
+    height:34px; min-width:34px; padding:0 10px;
+    cursor:pointer; font-size:13px; font-weight:600;
+    transition:background .15s ease, color .15s ease, transform .12s ease;
+  }
+  .cal-nav button:hover{ background:rgba(255,255,255,0.08); color:var(--text-primary); }
+  .cal-nav button:active{ transform:translateY(1px); }
+  .cal-nav .cal-today{ letter-spacing:0.04em; }
+
+  .cal-add{
+    background:linear-gradient(180deg, #FFFFFF 0%, #E8E5DD 100%);
+    color:#0A0A0B; font-weight:700;
+    border:none; border-radius:10px;
+    height:34px; padding:0 14px; cursor:pointer; font-size:13px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 6px 16px rgba(0,0,0,0.35);
+    transition:transform .12s ease, filter .15s ease;
+  }
+  .cal-add:hover{ transform:translateY(-1px); filter:brightness(1.04); }
+  .cal-add:active{ transform:translateY(0); }
+
+  /* legend + stats */
+  .cal-meta{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .cal-stats{ font-family:var(--mono); font-size:11.5px; color:var(--text-secondary); letter-spacing:0.02em; }
+  .cal-legend{ display:flex; gap:12px; flex-wrap:wrap; margin-left:auto; }
+  .cal-leg{ display:inline-flex; align-items:center; gap:6px; font-size:11px; color:var(--text-tertiary); }
+  .cal-leg-dot{ width:9px; height:9px; border-radius:3px; }
+
+  /* timeline */
+  .cal-scroll{
+    position:relative;
+    max-height:560px;
+    overflow-y:auto;
+    border-radius:12px;
+    background:rgba(0,0,0,0.22);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,0.14) transparent;
+  }
+  .cal-scroll::-webkit-scrollbar{ width:8px; }
+  .cal-scroll::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.12); border-radius:8px; }
+
+  .cal-grid{ position:relative; }
+
+  .cal-hline{ position:absolute; left:var(--gutter); right:0; height:1px; background:rgba(255,255,255,0.05); }
+  .cal-hline.half{ background:rgba(255,255,255,0.025); }
+  .cal-hlabel{
+    position:absolute; left:0; width:var(--gutter);
+    transform:translateY(-50%);
+    padding-right:10px; text-align:right;
+    font-family:var(--mono); font-size:10.5px; color:var(--text-tertiary);
+    letter-spacing:0.02em; pointer-events:none;
+  }
+
+  .cal-blocks{ position:absolute; left:var(--gutter); right:8px; top:0; bottom:0; }
+
+  .cal-empty-hint{
+    position:absolute; left:50%; top:42%; transform:translate(-50%,-50%);
+    text-align:center; color:var(--text-tertiary); font-size:12px; font-style:italic;
+    pointer-events:none; line-height:1.5; max-width:240px;
+  }
+
+  .cal-block{
+    position:absolute;
+    border-radius:9px;
+    padding:5px 9px;
+    overflow:hidden;
+    cursor:grab;
+    border:1px solid var(--hairline);
+    color:var(--text-primary);
+    transition:filter .15s ease, box-shadow .15s ease;
+    touch-action:none;
+    user-select:none;
+  }
+  .cal-block:hover{ filter:brightness(1.12); z-index:5; }
+  .cal-block.dragging{ cursor:grabbing; z-index:20; filter:brightness(1.16); box-shadow:0 10px 28px rgba(0,0,0,0.5); }
+  .cal-block-title{
+    font-size:12.5px; font-weight:650; line-height:1.25;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .cal-block-time{
+    font-family:var(--mono); font-size:10px; color:var(--text-secondary);
+    letter-spacing:0.01em; margin-top:1px; white-space:nowrap;
+  }
+  .cal-block.is-short{ padding:3px 9px; }
+  .cal-block.is-short .cal-block-time{ display:none; }
+  .cal-block.is-short .cal-block-title{ font-size:11.5px; }
+  .cal-block-resize{
+    position:absolute; left:0; right:0; bottom:0; height:9px;
+    cursor:ns-resize;
+  }
+  .cal-block-resize::after{
+    content:''; position:absolute; left:50%; bottom:2px; transform:translateX(-50%);
+    width:22px; height:2px; border-radius:2px; background:rgba(255,255,255,0.22);
+    opacity:0; transition:opacity .15s ease;
+  }
+  .cal-block:hover .cal-block-resize::after{ opacity:1; }
+
+  /* now line */
+  .cal-now{ position:absolute; left:var(--gutter); right:8px; height:0; pointer-events:none; z-index:8; }
+  .cal-now::before{ content:''; position:absolute; left:0; right:0; top:-1px; height:2px; background:var(--success); box-shadow:0 0 8px rgba(107,227,164,0.6); }
+  .cal-now-dot{ position:absolute; left:-4px; top:-4px; width:8px; height:8px; border-radius:50%; background:var(--success); box-shadow:0 0 8px rgba(107,227,164,0.8); }
+
+  /* editor modal */
+  .cal-overlay{
+    position:fixed; inset:0; z-index:50;
+    background:rgba(0,0,0,0.55);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    display:none; align-items:center; justify-content:center;
+    padding:18px;
+  }
+  .cal-overlay.open{ display:flex; }
+  .cal-modal{
+    width:100%; max-width:380px;
+    background:#0E0E10;
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.6);
+    animation:pop .22s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes pop{ from{ opacity:0; transform:translateY(8px) scale(0.98);} to{ opacity:1; transform:none;} }
+  .cal-modal h3{ margin:0 0 16px; font-size:15px; font-weight:700; letter-spacing:-0.01em; }
+  .cal-field{ margin-bottom:14px; }
+  .cal-field label{ display:block; font-size:10.5px; text-transform:uppercase; letter-spacing:0.12em; color:var(--text-tertiary); margin-bottom:7px; font-weight:600; }
+  .cal-input{
+    width:100%; font-family:var(--font); font-size:14px; color:var(--text-primary);
+    background:rgba(255,255,255,0.04); border:1px solid var(--hairline);
+    border-radius:10px; padding:10px 12px; outline:none;
+    transition:border-color .15s ease;
+  }
+  .cal-input:focus{ border-color:rgba(255,255,255,0.28); }
+  .cal-times{ display:flex; gap:10px; }
+  .cal-times .cal-field{ flex:1; margin-bottom:0; }
+  input[type=time]{
+    font-family:var(--mono); color-scheme:dark;
+  }
+  .cal-cats{ display:flex; flex-wrap:wrap; gap:7px; }
+  .cal-cat{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12px; color:var(--text-secondary);
+    background:rgba(255,255,255,0.04); border:1px solid var(--hairline);
+    border-radius:999px; padding:6px 11px; cursor:pointer;
+    transition:border-color .15s ease, color .15s ease, background .15s ease;
+  }
+  .cal-cat .cal-cat-dot{ width:9px; height:9px; border-radius:3px; }
+  .cal-cat.active{ color:var(--text-primary); background:rgba(255,255,255,0.08); }
+  .cal-err{ font-size:11px; color:var(--danger); margin-top:8px; min-height:14px; }
+  .cal-actions{ display:flex; align-items:center; gap:10px; margin-top:18px; }
+  .cal-del{
+    background:transparent; border:none; color:var(--text-tertiary);
+    font-family:var(--font); font-size:13px; cursor:pointer; padding:8px 4px;
+    transition:color .15s ease;
+  }
+  .cal-del:hover{ color:var(--danger); }
+  .cal-spacer{ flex:1; }
+  .cal-cancel{
+    background:rgba(255,255,255,0.04); border:1px solid var(--hairline); color:var(--text-secondary);
+    border-radius:10px; padding:9px 16px; cursor:pointer; font-size:13px; font-weight:600; font-family:var(--font);
+    transition:background .15s ease;
+  }
+  .cal-cancel:hover{ background:rgba(255,255,255,0.08); }
+  .cal-save{
+    background:linear-gradient(180deg, #FFFFFF 0%, #E8E5DD 100%);
+    color:#0A0A0B; font-weight:700; border:none; border-radius:10px;
+    padding:9px 18px; cursor:pointer; font-size:13px; font-family:var(--font);
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset;
+    transition:transform .12s ease, filter .15s ease;
+  }
+  .cal-save:hover{ transform:translateY(-1px); filter:brightness(1.04); }
+
+  @media (max-width:480px){
+    :root{ --gutter:46px; }
+    .cal-card{ padding:16px; }
+    .cal-date-main{ font-size:15px; }
+    .cal-legend{ display:none; }
+    .cal-add{ padding:0 12px; }
+    .cal-scroll{ max-height:calc(100dvh - 240px); }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="section-title">Day Planner</div>
+    <div class="cal-card">
+
+      <div class="cal-head">
+        <div class="cal-date">
+          <span class="cal-date-main" id="calDateMain">—</span>
+          <span class="cal-date-sub" id="calDateSub">—</span>
+        </div>
+        <div class="cal-nav">
+          <button id="calPrev" aria-label="Előző nap">‹</button>
+          <button class="cal-today" id="calTodayBtn">Ma</button>
+          <button id="calNext" aria-label="Következő nap">›</button>
+          <button class="cal-add" id="calAddBtn">+ Új blokk</button>
+        </div>
+      </div>
+
+      <div class="cal-meta">
+        <span class="cal-stats" id="calStats">0 blokk · 0 ó</span>
+        <div class="cal-legend" id="calLegend"></div>
+      </div>
+
+      <div class="cal-scroll" id="calScroll">
+        <div class="cal-grid" id="calGrid">
+          <div class="cal-blocks" id="calBlocks"></div>
+          <div class="cal-now" id="calNow" style="display:none"><span class="cal-now-dot"></span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- editor modal -->
+  <div class="cal-overlay" id="calOverlay">
+    <div class="cal-modal" role="dialog" aria-modal="true">
+      <h3 id="calModalTitle">Új blokk</h3>
+      <div class="cal-field">
+        <label for="calTitle">Mit csinálsz?</label>
+        <input class="cal-input" id="calTitle" type="text" placeholder="pl. Futás + húzódzkodás" autocomplete="off" />
+      </div>
+      <div class="cal-times">
+        <div class="cal-field">
+          <label for="calStart">Kezdés</label>
+          <input class="cal-input" id="calStart" type="time" step="900" />
+        </div>
+        <div class="cal-field">
+          <label for="calEnd">Vége</label>
+          <input class="cal-input" id="calEnd" type="time" step="900" />
+        </div>
+      </div>
+      <div class="cal-field" style="margin-top:14px">
+        <label>Kategória</label>
+        <div class="cal-cats" id="calCats"></div>
+      </div>
+      <div class="cal-err" id="calErr"></div>
+      <div class="cal-actions">
+        <button class="cal-del" id="calDelBtn" style="display:none">Törlés</button>
+        <span class="cal-spacer"></span>
+        <button class="cal-cancel" id="calCancelBtn">Mégse</button>
+        <button class="cal-save" id="calSaveBtn">Mentés</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  const START_HOUR = 6;
+  const END_HOUR   = 24;
+  const HOURS      = END_HOUR - START_HOUR;
+  const HOUR_PX    = 64;
+  const SNAP_MIN   = 15;
+
+  const CATS = {
+    training:{ label:'Edzés',    color:'#6BE3A4' },
+    work:    { label:'Munka',    color:'#F36F4F' },
+    meal:    { label:'Étkezés',  color:'#F2C063' },
+    rest:    { label:'Pihenés',  color:'#9B7BD4' },
+    focus:   { label:'Fókusz',   color:'#6AA8FF' },
+    other:   { label:'Egyéb',    color:'#9A98A4' },
+  };
+  const CAT_ORDER = ['training','work','focus','meal','rest','other'];
+
+  const WEEKDAYS = ['Vasárnap','Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat'];
+  const MONTHS   = ['jan.','feb.','márc.','ápr.','máj.','jún.','júl.','aug.','szept.','okt.','nov.','dec.'];
+
+  const grid     = document.getElementById('calGrid');
+  const blocksEl = document.getElementById('calBlocks');
+  const scrollEl = document.getElementById('calScroll');
+  const nowEl    = document.getElementById('calNow');
+  const dateMain = document.getElementById('calDateMain');
+  const dateSub  = document.getElementById('calDateSub');
+  const statsEl  = document.getElementById('calStats');
+  const legendEl = document.getElementById('calLegend');
+
+  const overlay    = document.getElementById('calOverlay');
+  const modalTitle = document.getElementById('calModalTitle');
+  const fTitle = document.getElementById('calTitle');
+  const fStart = document.getElementById('calStart');
+  const fEnd   = document.getElementById('calEnd');
+  const catsEl = document.getElementById('calCats');
+  const errEl  = document.getElementById('calErr');
+  const delBtn = document.getElementById('calDelBtn');
+
+  let activeDate = new Date();
+  let editingId  = null;
+  let editingCat = 'focus';
+
+  function storeGet(k){ try{ const v = localStorage.getItem(k); return v? JSON.parse(v): null; }catch(e){ return null; } }
+  function storeSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function uid(){ return 'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
+
+  function pad2(n){ return n<10? '0'+n : ''+n; }
+  function dateKey(d){ return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate()); }
+  function isSameDay(a,b){ return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate(); }
+  function scheduleKey(d){ return 'schedule:'+dateKey(d); }
+
+  function toMin(hhmm){ const p = hhmm.split(':'); return (+p[0])*60 + (+p[1]); }
+  function minToTime(m){ m = Math.max(0, Math.min(1440, Math.round(m))); return pad2(Math.floor(m/60))+':'+pad2(m%60); }
+  function toInputTime(t){ return t==='24:00' ? '23:59' : t; }
+  function fmtTime(m){ return pad2(Math.floor(m/60))+':'+pad2(m%60); }
+  function snap(m){ return Math.round(m/SNAP_MIN)*SNAP_MIN; }
+  function clampMin(m){ return Math.max(START_HOUR*60, Math.min(END_HOUR*60, m)); }
+
+  function minToY(absMin){ return ((absMin - START_HOUR*60)/60)*HOUR_PX; }
+  function yToMin(y){ return START_HOUR*60 + (y/HOUR_PX)*60; }
+
+  function hexToRgba(hex, a){
+    const h = hex.replace('#','');
+    const r = parseInt(h.slice(0,2),16), g = parseInt(h.slice(2,4),16), b = parseInt(h.slice(4,6),16);
+    return 'rgba('+r+','+g+','+b+','+a+')';
+  }
+
+  function getBlocks(){ const v = storeGet(scheduleKey(activeDate)); return Array.isArray(v)? v : []; }
+  function setBlocks(arr){ storeSet(scheduleKey(activeDate), arr); }
+
+  function buildGrid(){
+    grid.style.height = (HOURS*HOUR_PX)+'px';
+    grid.querySelectorAll('.cal-hline, .cal-hlabel').forEach(n=>n.remove());
+    const frag = document.createDocumentFragment();
+    for(let h=START_HOUR; h<=END_HOUR; h++){
+      const y = (h-START_HOUR)*HOUR_PX;
+      const line = document.createElement('div');
+      line.className = 'cal-hline';
+      line.style.top = y+'px';
+      frag.appendChild(line);
+      if(h < END_HOUR){
+        const half = document.createElement('div');
+        half.className = 'cal-hline half';
+        half.style.top = (y+HOUR_PX/2)+'px';
+        frag.appendChild(half);
+      }
+      const lbl = document.createElement('div');
+      lbl.className = 'cal-hlabel';
+      lbl.style.top = y+'px';
+      lbl.textContent = (h===24? '0' : h)+':00';
+      frag.appendChild(lbl);
+    }
+    grid.insertBefore(frag, blocksEl);
+  }
+
+  function layout(blocks){
+    const items = blocks.map(b=>({ ref:b, s:toMin(b.start), e:toMin(b.end) }))
+                        .filter(it=> it.e > it.s)
+                        .sort((a,b)=> a.s-b.s || a.e-b.e);
+    let i=0;
+    const out=[];
+    while(i<items.length){
+      const cluster=[items[i]];
+      let end=items[i].e;
+      let j=i+1;
+      while(j<items.length && items[j].s < end){ cluster.push(items[j]); end=Math.max(end, items[j].e); j++; }
+      const colEnd=[];
+      for(const it of cluster){
+        let placed=false;
+        for(let c=0;c<colEnd.length;c++){
+          if(it.s >= colEnd[c]){ it.col=c; colEnd[c]=it.e; placed=true; break; }
+        }
+        if(!placed){ it.col=colEnd.length; colEnd.push(it.e); }
+      }
+      const n=colEnd.length;
+      for(const it of cluster){ it.n=n; out.push(it); }
+      i=j;
+    }
+    return out;
+  }
+
+  function render(){
+    blocksEl.querySelectorAll('.cal-block, .cal-empty-hint').forEach(n=>n.remove());
+    const blocks = getBlocks();
+
+    if(blocks.length===0){
+      const hint = document.createElement('div');
+      hint.className='cal-empty-hint';
+      hint.textContent='Kattints az idősávra (vagy a + Új blokk gombra), és írd be, mit csinálsz.';
+      blocksEl.appendChild(hint);
+    }
+
+    const laid = layout(blocks);
+    const gap = 4;
+    for(const it of laid){
+      const b = it.ref;
+      const cat = CATS[b.cat] || CATS.other;
+      const top = minToY(it.s);
+      const h = Math.max(20, minToY(it.e)-minToY(it.s));
+      const widthPct = 100/it.n;
+      const el = document.createElement('div');
+      el.className = 'cal-block' + (h<40? ' is-short':'');
+      el.dataset.id = b.id;
+      el.style.top = top+'px';
+      el.style.height = (h-2)+'px';
+      el.style.left = 'calc('+(it.col*widthPct)+'% + '+(it.col?gap/2:0)+'px)';
+      el.style.width = 'calc('+widthPct+'% - '+gap+'px)';
+      el.style.background = hexToRgba(cat.color, 0.16);
+      el.style.boxShadow = 'inset 3px 0 0 0 '+cat.color;
+      el.innerHTML =
+        '<div class="cal-block-title"></div>'+
+        '<div class="cal-block-time"></div>'+
+        '<div class="cal-block-resize"></div>';
+      el.querySelector('.cal-block-title').textContent = b.title || '(névtelen)';
+      el.querySelector('.cal-block-time').textContent = fmtTime(it.s)+'–'+fmtTime(it.e);
+      wireBlock(el, b);
+      blocksEl.appendChild(el);
+    }
+
+    renderStats(blocks);
+    renderNow();
+  }
+
+  function renderStats(blocks){
+    const n = blocks.length;
+    let mins = 0;
+    for(const b of blocks){ mins += Math.max(0, toMin(b.end)-toMin(b.start)); }
+    const hrs = (mins/60).toFixed(1).replace('.', ',').replace(',0','');
+    statsEl.textContent = n+' blokk · '+hrs+' ó tervezve';
+  }
+
+  function renderNow(){
+    if(!isSameDay(activeDate, new Date())){ nowEl.style.display='none'; return; }
+    const now = new Date();
+    const m = now.getHours()*60 + now.getMinutes();
+    if(m < START_HOUR*60 || m > END_HOUR*60){ nowEl.style.display='none'; return; }
+    nowEl.style.display='block';
+    nowEl.style.top = minToY(m)+'px';
+  }
+
+  function wireBlock(el, b){
+    const resize = el.querySelector('.cal-block-resize');
+
+    resize.addEventListener('pointerdown', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+      const startY = e.clientY;
+      const origEnd = toMin(b.end);
+      const origStart = toMin(b.start);
+      el.classList.add('dragging');
+      el.setPointerCapture(e.pointerId);
+
+      function move(ev){
+        const dMin = ((ev.clientY-startY)/HOUR_PX)*60;
+        let newEnd = clampMin(snap(origEnd + dMin));
+        if(newEnd <= origStart + SNAP_MIN) newEnd = origStart + SNAP_MIN;
+        el.style.height = Math.max(20, minToY(newEnd)-minToY(origStart)-2)+'px';
+        const t = el.querySelector('.cal-block-time');
+        if(t) t.textContent = fmtTime(origStart)+'–'+fmtTime(newEnd);
+      }
+      function up(ev){
+        el.releasePointerCapture(e.pointerId);
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+        el.classList.remove('dragging');
+        const dMin = ((ev.clientY-startY)/HOUR_PX)*60;
+        let newEnd = clampMin(snap(origEnd + dMin));
+        if(newEnd <= origStart + SNAP_MIN) newEnd = origStart + SNAP_MIN;
+        commit(b.id, { end: minToTime(newEnd) });
+      }
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+    });
+
+    el.addEventListener('pointerdown', (e)=>{
+      if(e.target === resize) return;
+      e.preventDefault();
+      const startY = e.clientY;
+      const origStart = toMin(b.start);
+      const dur = toMin(b.end) - origStart;
+      let moved = false;
+      el.setPointerCapture(e.pointerId);
+
+      function move(ev){
+        const dy = ev.clientY-startY;
+        if(Math.abs(dy) > 3) moved = true;
+        if(!moved) return;
+        el.classList.add('dragging');
+        const dMin = (dy/HOUR_PX)*60;
+        let newStart = snap(origStart + dMin);
+        newStart = Math.max(START_HOUR*60, Math.min(END_HOUR*60 - dur, newStart));
+        el.style.top = minToY(newStart)+'px';
+        const t = el.querySelector('.cal-block-time');
+        if(t) t.textContent = fmtTime(newStart)+'–'+fmtTime(newStart+dur);
+      }
+      function up(ev){
+        el.releasePointerCapture(e.pointerId);
+        el.removeEventListener('pointermove', move);
+        el.removeEventListener('pointerup', up);
+        el.classList.remove('dragging');
+        if(!moved){ openEditor(b.id); return; }
+        const dMin = ((ev.clientY-startY)/HOUR_PX)*60;
+        let newStart = snap(origStart + dMin);
+        newStart = Math.max(START_HOUR*60, Math.min(END_HOUR*60 - dur, newStart));
+        commit(b.id, { start: minToTime(newStart), end: minToTime(newStart+dur) });
+      }
+      el.addEventListener('pointermove', move);
+      el.addEventListener('pointerup', up);
+    });
+  }
+
+  function commit(id, patch){
+    const blocks = getBlocks();
+    const idx = blocks.findIndex(x=>x.id===id);
+    if(idx<0) return;
+    Object.assign(blocks[idx], patch);
+    setBlocks(blocks);
+    render();
+  }
+
+  blocksEl.addEventListener('click', (e)=>{
+    if(e.target !== blocksEl) return;
+    const rect = blocksEl.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    let startMin = clampMin(snap(yToMin(y)));
+    if(startMin >= END_HOUR*60 - SNAP_MIN) startMin = END_HOUR*60 - 60;
+    let endMin = Math.min(END_HOUR*60, startMin + 60);
+    openEditor(null, { start: minToTime(startMin), end: minToTime(endMin) });
+  });
+
+  function buildCatChips(){
+    catsEl.innerHTML='';
+    for(const key of CAT_ORDER){
+      const c = CATS[key];
+      const chip = document.createElement('button');
+      chip.type='button';
+      chip.className='cal-cat'+(key===editingCat?' active':'');
+      chip.dataset.cat=key;
+      chip.innerHTML='<span class="cal-cat-dot" style="background:'+c.color+'"></span>'+c.label;
+      chip.addEventListener('click', ()=>{
+        editingCat=key;
+        catsEl.querySelectorAll('.cal-cat').forEach(x=>x.classList.toggle('active', x.dataset.cat===key));
+      });
+      catsEl.appendChild(chip);
+    }
+  }
+
+  function openEditor(id, prefill){
+    editingId = id;
+    errEl.textContent='';
+    if(id){
+      const b = getBlocks().find(x=>x.id===id);
+      if(!b) return;
+      modalTitle.textContent='Blokk szerkesztése';
+      fTitle.value = b.title || '';
+      fStart.value = toInputTime(b.start);
+      fEnd.value = toInputTime(b.end);
+      editingCat = b.cat || 'focus';
+      delBtn.style.display='inline-block';
+    }else{
+      modalTitle.textContent='Új blokk';
+      fTitle.value='';
+      fStart.value = prefill ? prefill.start : '09:00';
+      fEnd.value   = prefill ? prefill.end   : '10:00';
+      editingCat = 'focus';
+      delBtn.style.display='none';
+    }
+    buildCatChips();
+    overlay.classList.add('open');
+    setTimeout(()=>fTitle.focus(), 30);
+  }
+
+  function closeEditor(){ overlay.classList.remove('open'); editingId=null; }
+
+  function saveEditor(){
+    const title = fTitle.value.trim();
+    const start = fStart.value, end = fEnd.value;
+    if(!start || !end){ errEl.textContent='Adj meg kezdő és befejező időt.'; return; }
+    if(toMin(end) <= toMin(start)){ errEl.textContent='A vége legyen a kezdés után.'; return; }
+    const blocks = getBlocks();
+    if(editingId){
+      const idx = blocks.findIndex(x=>x.id===editingId);
+      if(idx>=0) Object.assign(blocks[idx], { title: title || '(névtelen)', start, end, cat: editingCat });
+    }else{
+      blocks.push({ id: uid(), title: title || '(névtelen)', start, end, cat: editingCat });
+    }
+    setBlocks(blocks);
+    closeEditor();
+    render();
+  }
+
+  function deleteEditing(){
+    if(!editingId) return;
+    const blocks = getBlocks().filter(x=>x.id!==editingId);
+    setBlocks(blocks);
+    closeEditor();
+    render();
+  }
+
+  document.getElementById('calSaveBtn').addEventListener('click', saveEditor);
+  document.getElementById('calCancelBtn').addEventListener('click', closeEditor);
+  delBtn.addEventListener('click', deleteEditing);
+  overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeEditor(); });
+  fTitle.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); saveEditor(); } });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && overlay.classList.contains('open')) closeEditor(); });
+
+  document.getElementById('calAddBtn').addEventListener('click', ()=>{
+    const now = new Date();
+    let startMin;
+    if(isSameDay(activeDate, now)){
+      startMin = clampMin(snap(now.getHours()*60 + now.getMinutes()));
+    }else{
+      startMin = 9*60;
+    }
+    if(startMin >= END_HOUR*60 - SNAP_MIN) startMin = END_HOUR*60 - 60;
+    openEditor(null, { start: minToTime(startMin), end: minToTime(Math.min(END_HOUR*60, startMin+60)) });
+  });
+
+  function shiftDay(delta){ const d = new Date(activeDate); d.setDate(d.getDate()+delta); activeDate=d; refresh(); }
+  document.getElementById('calPrev').addEventListener('click', ()=>shiftDay(-1));
+  document.getElementById('calNext').addEventListener('click', ()=>shiftDay(1));
+  document.getElementById('calTodayBtn').addEventListener('click', ()=>{ activeDate=new Date(); refresh(); scrollToNow(); });
+
+  function renderHeader(){
+    const d = activeDate;
+    const today = new Date();
+    let main = WEEKDAYS[d.getDay()];
+    if(isSameDay(d, today)) main = 'Ma · '+main;
+    dateMain.textContent = main;
+    dateSub.textContent = d.getFullYear()+'. '+MONTHS[d.getMonth()]+' '+d.getDate()+'.';
+  }
+
+  function renderLegend(){
+    legendEl.innerHTML='';
+    for(const key of CAT_ORDER){
+      const c = CATS[key];
+      const item = document.createElement('span');
+      item.className='cal-leg';
+      item.innerHTML='<span class="cal-leg-dot" style="background:'+c.color+'"></span>'+c.label;
+      legendEl.appendChild(item);
+    }
+  }
+
+  function refresh(){ renderHeader(); render(); }
+
+  function scrollToNow(){
+    const now = new Date();
+    let m = now.getHours()*60 + now.getMinutes();
+    if(m < START_HOUR*60) m = START_HOUR*60;
+    const y = Math.max(0, minToY(m) - 140);
+    scrollEl.scrollTop = y;
+  }
+
+  function seedIfEmpty(){
+    const today = new Date();
+    const key = scheduleKey(today);
+    if(storeGet(key) !== null) return;
+    const plan = [
+      { title:'Ebéd',                 start:'13:00', end:'13:40', cat:'meal' },
+      { title:'Pihi / alvás',         start:'13:40', end:'14:20', cat:'rest' },
+      { title:'Vinted feltöltés',     start:'14:20', end:'15:10', cat:'focus' },
+      { title:'Futás + húzódzkodás',  start:'15:10', end:'16:20', cat:'training' },
+      { title:'Zuhany',               start:'16:20', end:'16:40', cat:'other' },
+      { title:'Dashboard',            start:'16:40', end:'17:20', cat:'focus' },
+      { title:'Vacsora',              start:'17:20', end:'17:50', cat:'meal' },
+      { title:'Munka Szegeden',       start:'18:00', end:'23:30', cat:'work' },
+    ].map(b=>({ id: uid(), ...b }));
+    storeSet(key, plan);
+  }
+
+  buildGrid();
+  renderLegend();
+  seedIfEmpty();
+  refresh();
+  scrollToNow();
+  renderNow();
+  setInterval(renderNow, 30*1000);
+
+  // Re-render when another tab writes schedule data (e.g. cloud sync applies)
+  window.addEventListener('storage', (e)=>{ if(e.key && e.key.startsWith('schedule:')) render(); });
+
+})();
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  if (typeof initCloudSync !== 'function') return;
+  initCloudSync({
+    appKey: 'schedule',
+    syncedPrefixes: ['schedule:'],
+    onApplied: function () { window.dispatchEvent(new Event('storage')); }
+  });
+});
+</script>
+</body>
+</html>

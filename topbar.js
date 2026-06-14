@@ -176,6 +176,9 @@ body.topbar-modal-open { overflow: hidden; touch-action: none; }
   <a href="habits.html" class="bottombar-tab" data-page="habits">
     <span class="bottombar-tab-icon">🎯</span><span>Habits</span>
   </a>
+  <a href="schedule.html" class="bottombar-tab" data-page="planner">
+    <span class="bottombar-tab-icon">📅</span><span>Day Planner</span>
+  </a>
 </nav>`;
 
   function isFinancePage() {
@@ -191,6 +194,7 @@ body.topbar-modal-open { overflow: hidden; touch-action: none; }
     if (p.endsWith('health.html')) return 'health';
     if (p.endsWith('gym.html')) return 'fitness';
     if (p.endsWith('habits.html')) return 'habits';
+    if (p.endsWith('schedule.html')) return 'planner';
     return 'main';
   }
 
