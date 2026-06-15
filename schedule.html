@@ -763,6 +763,32 @@
   renderNow();
   setInterval(renderNow, 30*1000);
 
+  // Reset to today when the page is restored from BFcache (browser back/forward).
+  // Without this, activeDate stays frozen at the date the page was first loaded.
+  window.addEventListener('pageshow', function(e){
+    if(e.persisted){
+      activeDate = new Date();
+      seedIfEmpty();
+      refresh();
+      scrollToNow();
+    }
+  });
+
+  // Reset if the calendar day rolled over while this tab was hidden.
+  document.addEventListener('visibilitychange', function(){
+    if(document.visibilityState === 'visible' && !isSameDay(activeDate, new Date())){
+      activeDate = new Date();
+      seedIfEmpty();
+      refresh();
+      scrollToNow();
+    }
+  });
+
+  // Expose render so the cloud-sync onApplied callback can trigger a re-render
+  // in the same tab (storage events from localStorage.setItem don't fire in the
+  // originating tab, so the storage listener below can't catch same-tab sync).
+  window._scheduleRender = render;
+
   // Re-render when another tab writes schedule data (e.g. cloud sync applies)
   window.addEventListener('storage', (e)=>{ if(e.key && e.key.startsWith('schedule:')) render(); });
 
@@ -775,7 +801,7 @@ document.addEventListener('DOMContentLoaded', function () {
   initCloudSync({
     appKey: 'schedule',
     syncedPrefixes: ['schedule:'],
-    onApplied: function () { window.dispatchEvent(new Event('storage')); }
+    onApplied: function () { if(typeof window._scheduleRender === 'function') window._scheduleRender(); }
   });
 });
 </script>
