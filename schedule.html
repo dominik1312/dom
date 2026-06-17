@@ -276,6 +276,76 @@
   }
   .cal-save:hover{ transform:translateY(-1px); filter:brightness(1.04); }
 
+  /* Category select header — label + "manage categories" trigger */
+  .cal-cats-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+  .cal-cats-head label{ margin-bottom:0; }
+  .cat-mgr-trigger{
+    background:transparent; border:none; color:var(--text-tertiary);
+    font-family:var(--font); font-size:11px; font-weight:600; cursor:pointer;
+    padding:3px 7px; border-radius:6px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .cat-mgr-trigger:hover{ color:var(--text-primary); background:rgba(255,255,255,0.06); }
+
+  /* Category manager modal */
+  .cat-mgr-modal{ max-width:420px; }
+  .cat-mgr-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .cat-mgr-head h3{ margin:0; }
+  .cat-mgr-close{
+    background:transparent; border:none; color:var(--text-tertiary);
+    font-size:20px; line-height:1; cursor:pointer; padding:2px 7px; border-radius:6px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .cat-mgr-close:hover{ color:var(--text-primary); background:rgba(255,255,255,0.06); }
+
+  .cat-mgr-list{ display:flex; flex-direction:column; gap:6px; max-height:280px; overflow-y:auto; margin-bottom:12px; }
+  .cat-mgr-row{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    padding:8px 10px; border-radius:10px; background:rgba(255,255,255,0.03);
+  }
+  .cat-mgr-dot{ width:11px; height:11px; border-radius:3px; flex-shrink:0; }
+  .cat-mgr-name{
+    flex:1; font-size:13px; color:var(--text-primary); min-width:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .cat-mgr-lock{ font-size:11px; opacity:0.55; flex-shrink:0; }
+  .cat-mgr-edit, .cat-mgr-del{
+    background:transparent; border:none; color:var(--text-tertiary);
+    cursor:pointer; font-size:13px; padding:4px 6px; border-radius:6px; flex-shrink:0;
+    font-family:inherit;
+    transition:color .15s ease, background .15s ease;
+  }
+  .cat-mgr-edit:hover{ color:var(--text-primary); background:rgba(255,255,255,0.06); }
+  .cat-mgr-del:hover{ color:var(--danger); background:rgba(255,107,107,0.08); }
+  .cat-mgr-del.is-confirm{ color:var(--danger); background:rgba(255,107,107,0.14); font-size:11px; padding:4px 8px; white-space:nowrap; font-weight:600; }
+  .cat-mgr-del:disabled{ opacity:0.3; cursor:not-allowed; }
+
+  .cat-mgr-edit-form{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; width:100%; }
+  .cat-mgr-edit-input{ flex:1; min-width:100px; padding:7px 10px; font-size:13px; }
+  .cat-mgr-edit-form .cat-mgr-save, .cat-mgr-edit-form .cat-mgr-cancel{
+    font-family:var(--font); font-size:12px; font-weight:600; padding:7px 12px;
+    border-radius:8px; cursor:pointer; border:1px solid var(--hairline);
+  }
+  .cat-mgr-edit-form .cat-mgr-save{ background:linear-gradient(180deg,#FFFFFF,#E8E5DD); color:#0A0A0B; border:none; }
+  .cat-mgr-edit-form .cat-mgr-cancel{ background:rgba(255,255,255,0.04); color:var(--text-secondary); }
+
+  .cat-mgr-swatches{ display:flex; flex-wrap:wrap; gap:6px; }
+  .cat-mgr-swatch{
+    width:20px; height:20px; border-radius:50%; cursor:pointer;
+    border:2px solid transparent; box-sizing:border-box; padding:0;
+    transition:transform .12s ease, border-color .15s ease;
+  }
+  .cat-mgr-swatch:hover{ transform:scale(1.1); }
+  .cat-mgr-swatch.active{ border-color:#FFFFFF; }
+
+  .cat-mgr-add{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding-top:10px; border-top:1px solid var(--hairline); }
+  .cat-mgr-add-input{ flex:1; min-width:120px; padding:8px 10px; font-size:13px; }
+  .cat-mgr-add-btn{
+    background:linear-gradient(180deg,#FFFFFF,#E8E5DD); color:#0A0A0B; font-weight:700;
+    border:none; border-radius:10px; width:34px; height:34px; font-size:16px; cursor:pointer;
+    flex-shrink:0; font-family:inherit;
+  }
+
   @media (max-width:480px){
     :root{ --gutter:46px; }
     .cal-card{ padding:16px; }
@@ -338,7 +408,10 @@
         </div>
       </div>
       <div class="cal-field" style="margin-top:14px">
-        <label>Kategória</label>
+        <div class="cal-cats-head">
+          <label style="margin-bottom:0">Kategória</label>
+          <button type="button" class="cat-mgr-trigger" id="catMgrOpenBtn" title="Kategóriák kezelése">⚙ Kezelés</button>
+        </div>
         <div class="cal-cats" id="calCats"></div>
       </div>
       <div class="cal-field">
@@ -355,6 +428,22 @@
     </div>
   </div>
 
+  <!-- category manager modal -->
+  <div class="cal-overlay" id="catMgrOverlay">
+    <div class="cal-modal cat-mgr-modal" role="dialog" aria-modal="true">
+      <div class="cat-mgr-head">
+        <h3>Kategóriák kezelése</h3>
+        <button class="cat-mgr-close" id="catMgrCloseBtn" aria-label="Bezárás" type="button">×</button>
+      </div>
+      <div class="cat-mgr-list" id="catMgrList"></div>
+      <div class="cat-mgr-add">
+        <div class="cat-mgr-swatches" id="catMgrAddSwatches"></div>
+        <input class="cal-input cat-mgr-add-input" id="catMgrAddName" type="text" placeholder="Új kategória neve" autocomplete="off" />
+        <button class="cat-mgr-add-btn" id="catMgrAddBtn" aria-label="Hozzáadás" type="button">+</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 (function(){
   "use strict";
@@ -365,15 +454,52 @@
   const HOUR_PX    = 64;
   const SNAP_MIN   = 15;
 
-  const CATS = {
-    training:{ label:'Edzés',    color:'#6BE3A4' },
-    work:    { label:'Munka',    color:'#F36F4F' },
-    meal:    { label:'Étkezés',  color:'#F2C063' },
-    rest:    { label:'Pihenés',  color:'#9B7BD4' },
-    focus:   { label:'Fókusz',   color:'#6AA8FF' },
-    other:   { label:'Egyéb',    color:'#9A98A4' },
-  };
-  const CAT_ORDER = ['training','work','focus','meal','rest','other'];
+  // Categories used to be a hardcoded object. They're now stored in
+  // localStorage under CATS_KEY so users can add/rename/delete their own,
+  // while built-in ones stay (renameable but not deletable) so existing
+  // blocks referencing 'training', 'work', etc. keep resolving correctly.
+  const CATS_KEY = 'dayplanner_categories';
+  const DEFAULT_CATEGORIES = [
+    { key:'training',      label:'Edzés',           color:'#6BE3A4', builtin:true },
+    { key:'work',          label:'Munka',           color:'#F36F4F', builtin:true },
+    { key:'focus',         label:'Fókusz',          color:'#6AA8FF', builtin:true },
+    { key:'meal',          label:'Étkezés',         color:'#F2C063', builtin:true },
+    { key:'rest',          label:'Pihenés',         color:'#9B7BD4', builtin:true },
+    { key:'other',         label:'Egyéb',           color:'#9A98A4', builtin:true },
+    { key:'uncategorized', label:'Nincs kategória', color:'#5A5852', builtin:true }
+  ];
+  const PALETTE = ['#6BE3A4','#F36F4F','#6AA8FF','#F2C063','#9B7BD4','#9A98A4','#FF8FA3','#5FD0D9','#E0A85C','#7DD3FC'];
+
+  function escAttr(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  // Idempotent: seeds the default set on first run, and backfills the
+  // 'uncategorized' fallback if older saved data predates it.
+  function loadCategories(){
+    let cats = storeGet(CATS_KEY);
+    if(!Array.isArray(cats) || !cats.length){
+      cats = DEFAULT_CATEGORIES.map(c=>({...c}));
+      storeSet(CATS_KEY, cats);
+      return cats;
+    }
+    if(!cats.some(c=>c.key==='uncategorized')){
+      cats.push({ key:'uncategorized', label:'Nincs kategória', color:'#5A5852', builtin:true });
+      storeSet(CATS_KEY, cats);
+    }
+    return cats;
+  }
+  function saveCategories(cats){ storeSet(CATS_KEY, cats); }
+  function getCategoryMap(){
+    const map = {};
+    loadCategories().forEach(c=>{ map[c.key] = c; });
+    return map;
+  }
+  function catKeyFromLabel(label){
+    const base = String(label).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') || 'cat';
+    const existing = loadCategories().map(c=>c.key);
+    let key = base, n = 1;
+    while(existing.includes(key)){ key = base+'-'+(++n); }
+    return key;
+  }
 
   const WEEKDAYS = ['Vasárnap','Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat'];
   const MONTHS   = ['jan.','feb.','márc.','ápr.','máj.','jún.','júl.','aug.','szept.','okt.','nov.','dec.'];
@@ -397,9 +523,20 @@
   const errEl  = document.getElementById('calErr');
   const delBtn = document.getElementById('calDelBtn');
 
+  const catMgrOpenBtn     = document.getElementById('catMgrOpenBtn');
+  const catMgrOverlay     = document.getElementById('catMgrOverlay');
+  const catMgrCloseBtn    = document.getElementById('catMgrCloseBtn');
+  const catMgrList        = document.getElementById('catMgrList');
+  const catMgrAddSwatches = document.getElementById('catMgrAddSwatches');
+  const catMgrAddName     = document.getElementById('catMgrAddName');
+  const catMgrAddBtn      = document.getElementById('catMgrAddBtn');
+
   let activeDate = new Date();
   let editingId  = null;
   let editingCat = 'focus';
+  let catMgrDelPending = null;
+  let catMgrDelTimer   = null;
+  let catMgrAddColor   = PALETTE[0];
 
   function storeGet(k){ try{ const v = localStorage.getItem(k); return v? JSON.parse(v): null; }catch(e){ return null; } }
   function storeSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -492,10 +629,11 @@
     }
 
     const laid = layout(blocks);
+    const catMap = getCategoryMap();
     const gap = 4;
     for(const it of laid){
       const b = it.ref;
-      const cat = CATS[b.cat] || CATS.other;
+      const cat = catMap[b.cat] || catMap.uncategorized;
       const top = minToY(it.s);
       const h = Math.max(20, minToY(it.e)-minToY(it.s));
       const widthPct = 100/it.n;
@@ -631,19 +769,18 @@
 
   function buildCatChips(){
     catsEl.innerHTML='';
-    for(const key of CAT_ORDER){
-      const c = CATS[key];
+    loadCategories().forEach(c=>{
       const chip = document.createElement('button');
       chip.type='button';
-      chip.className='cal-cat'+(key===editingCat?' active':'');
-      chip.dataset.cat=key;
-      chip.innerHTML='<span class="cal-cat-dot" style="background:'+c.color+'"></span>'+c.label;
+      chip.className='cal-cat'+(c.key===editingCat?' active':'');
+      chip.dataset.cat=c.key;
+      chip.innerHTML='<span class="cal-cat-dot" style="background:'+c.color+'"></span>'+escAttr(c.label);
       chip.addEventListener('click', ()=>{
-        editingCat=key;
-        catsEl.querySelectorAll('.cal-cat').forEach(x=>x.classList.toggle('active', x.dataset.cat===key));
+        editingCat=c.key;
+        catsEl.querySelectorAll('.cal-cat').forEach(x=>x.classList.toggle('active', x.dataset.cat===c.key));
       });
       catsEl.appendChild(chip);
-    }
+    });
   }
 
   function openEditor(id, prefill){
@@ -706,7 +843,12 @@
   delBtn.addEventListener('click', deleteEditing);
   overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeEditor(); });
   fTitle.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); saveEditor(); } });
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && overlay.classList.contains('open')) closeEditor(); });
+  // The category manager can be opened on top of this modal — if it's open,
+  // let its own Escape handler close that one first instead of both at once.
+  document.addEventListener('keydown', (e)=>{
+    if(e.key!=='Escape' || catMgrOverlay.classList.contains('open')) return;
+    if(overlay.classList.contains('open')) closeEditor();
+  });
 
   document.getElementById('calAddBtn').addEventListener('click', ()=>{
     const now = new Date();
@@ -719,6 +861,175 @@
     if(startMin >= END_HOUR*60 - SNAP_MIN) startMin = END_HOUR*60 - 60;
     openEditor(null, { start: minToTime(startMin), end: minToTime(Math.min(END_HOUR*60, startMin+60)) });
   });
+
+  // ============================================================
+  // CATEGORY MANAGER — add/rename/recolor/delete custom categories.
+  // Built-in categories (the original hardcoded set) can be renamed and
+  // recolored but never deleted, since existing blocks reference them by
+  // key. Deleting a custom category reassigns every block that used it
+  // (across all dates) to the permanent 'uncategorized' fallback rather
+  // than deleting those blocks.
+  // ============================================================
+  function buildSwatches(container, selectedColor, onPick){
+    container.innerHTML = PALETTE.map(c =>
+      '<span class="cat-mgr-swatch'+(c===selectedColor?' active':'')+'" data-color="'+c+'" style="background:'+c+'"></span>'
+    ).join('');
+    container.querySelectorAll('.cat-mgr-swatch').forEach(sw=>{
+      sw.addEventListener('click', ()=>{
+        container.querySelectorAll('.cat-mgr-swatch').forEach(x=>x.classList.remove('active'));
+        sw.classList.add('active');
+        onPick(sw.dataset.color);
+      });
+    });
+  }
+
+  function openCatMgr(){
+    catMgrDelPending = null;
+    if(catMgrDelTimer){ clearTimeout(catMgrDelTimer); catMgrDelTimer=null; }
+    renderCatMgrList();
+    catMgrAddName.value='';
+    catMgrAddColor = PALETTE[Math.floor(Math.random()*PALETTE.length)];
+    buildSwatches(catMgrAddSwatches, catMgrAddColor, (c)=>{ catMgrAddColor=c; });
+    catMgrOverlay.classList.add('open');
+  }
+  function closeCatMgr(){
+    catMgrOverlay.classList.remove('open');
+    catMgrDelPending = null;
+    if(catMgrDelTimer){ clearTimeout(catMgrDelTimer); catMgrDelTimer=null; }
+  }
+
+  function renderCatMgrList(){
+    const cats = loadCategories();
+    catMgrList.innerHTML = cats.map(c=>{
+      const lockHtml = c.builtin ? '<span class="cat-mgr-lock" title="Beépített kategória, nem törölhető">🔒</span>' : '';
+      const delBtnHtml = c.builtin
+        ? '<button class="cat-mgr-del" disabled title="Beépített kategória, nem törölhető" type="button">🗑</button>'
+        : '<button class="cat-mgr-del'+(catMgrDelPending===c.key?' is-confirm':'')+'" data-del="'+c.key+'" type="button">'+(catMgrDelPending===c.key?'Biztos?':'🗑')+'</button>';
+      return '<div class="cat-mgr-row" data-key="'+c.key+'">'
+        + '<span class="cat-mgr-dot" style="background:'+c.color+'"></span>'
+        + '<span class="cat-mgr-name">'+escAttr(c.label)+'</span>'
+        + lockHtml
+        + '<button class="cat-mgr-edit" data-edit="'+c.key+'" title="Szerkesztés" type="button">✏</button>'
+        + delBtnHtml
+        + '</div>';
+    }).join('');
+    catMgrList.querySelectorAll('[data-edit]').forEach(b=>{
+      b.addEventListener('click', ()=>openCatMgrEdit(b.dataset.edit));
+    });
+    catMgrList.querySelectorAll('[data-del]').forEach(b=>{
+      b.addEventListener('click', ()=>handleCatDeleteClick(b.dataset.del));
+    });
+  }
+
+  // First click arms a 3s "Biztos?" confirm state; a second click within
+  // that window actually deletes. Mirrors the press-twice pattern used
+  // elsewhere in the dashboard for destructive actions.
+  function handleCatDeleteClick(key){
+    if(catMgrDelPending === key){
+      if(catMgrDelTimer){ clearTimeout(catMgrDelTimer); catMgrDelTimer=null; }
+      catMgrDelPending = null;
+      deleteCategory(key);
+      return;
+    }
+    catMgrDelPending = key;
+    renderCatMgrList();
+    if(catMgrDelTimer) clearTimeout(catMgrDelTimer);
+    catMgrDelTimer = setTimeout(()=>{
+      catMgrDelPending = null;
+      renderCatMgrList();
+    }, 3000);
+  }
+
+  function refreshCategoryDependentUI(){
+    renderLegend();
+    render();
+    if(overlay.classList.contains('open')) buildCatChips();
+  }
+
+  function deleteCategory(key){
+    let cats = loadCategories();
+    const target = cats.find(c=>c.key===key);
+    if(!target || target.builtin) return;
+    cats = cats.filter(c=>c.key!==key);
+    saveCategories(cats);
+    reassignBlocksFromDeletedCategory(key);
+    renderCatMgrList();
+    refreshCategoryDependentUI();
+  }
+
+  // Walk every date-keyed schedule entry in localStorage (not just the
+  // currently viewed date) and reassign blocks that used the deleted
+  // category to the permanent 'uncategorized' fallback. Blocks themselves
+  // are never deleted.
+  function reassignBlocksFromDeletedCategory(deletedKey){
+    for(let i=0; i<localStorage.length; i++){
+      const k = localStorage.key(i);
+      if(!k || !k.startsWith('schedule:')) continue;
+      const blocks = storeGet(k);
+      if(!Array.isArray(blocks)) continue;
+      let changed = false;
+      blocks.forEach(b=>{
+        if(b.cat === deletedKey){ b.cat = 'uncategorized'; changed = true; }
+      });
+      if(changed) storeSet(k, blocks);
+    }
+  }
+
+  function openCatMgrEdit(key){
+    const cats = loadCategories();
+    const cat = cats.find(c=>c.key===key);
+    if(!cat) return;
+    const row = catMgrList.querySelector('.cat-mgr-row[data-key="'+key+'"]');
+    if(!row) return;
+    let editColor = cat.color;
+    row.innerHTML = '<div class="cat-mgr-edit-form">'
+      + '<div class="cat-mgr-swatches" id="catMgrEditSwatches"></div>'
+      + '<input class="cal-input cat-mgr-edit-input" id="catMgrEditName" value="'+escAttr(cat.label)+'" />'
+      + '<button class="cat-mgr-save" type="button">Mentés</button>'
+      + '<button class="cat-mgr-cancel" type="button">Mégse</button>'
+      + '</div>';
+    buildSwatches(row.querySelector('#catMgrEditSwatches'), editColor, (c)=>{ editColor=c; });
+    const nameInput = row.querySelector('#catMgrEditName');
+    setTimeout(()=>{ nameInput.focus(); nameInput.select(); }, 0);
+    const save = () => {
+      const newLabel = nameInput.value.trim();
+      if(!newLabel) return;
+      cat.label = newLabel;
+      cat.color = editColor;
+      saveCategories(cats);
+      renderCatMgrList();
+      refreshCategoryDependentUI();
+    };
+    row.querySelector('.cat-mgr-save').addEventListener('click', save);
+    row.querySelector('.cat-mgr-cancel').addEventListener('click', renderCatMgrList);
+    nameInput.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); save(); }
+      else if(e.key==='Escape'){ renderCatMgrList(); }
+    });
+  }
+
+  function addCategory(){
+    const name = catMgrAddName.value.trim();
+    if(!name){ catMgrAddName.focus(); return; }
+    const cats = loadCategories();
+    const key = catKeyFromLabel(name);
+    const newCat = { key, label:name, color:catMgrAddColor, builtin:false };
+    const uncatIdx = cats.findIndex(c=>c.key==='uncategorized');
+    if(uncatIdx >= 0) cats.splice(uncatIdx, 0, newCat); else cats.push(newCat);
+    saveCategories(cats);
+    catMgrAddName.value='';
+    catMgrAddColor = PALETTE[Math.floor(Math.random()*PALETTE.length)];
+    buildSwatches(catMgrAddSwatches, catMgrAddColor, (c)=>{ catMgrAddColor=c; });
+    renderCatMgrList();
+    refreshCategoryDependentUI();
+  }
+
+  catMgrOpenBtn.addEventListener('click', openCatMgr);
+  catMgrCloseBtn.addEventListener('click', closeCatMgr);
+  catMgrOverlay.addEventListener('click', (e)=>{ if(e.target===catMgrOverlay) closeCatMgr(); });
+  catMgrAddBtn.addEventListener('click', addCategory);
+  catMgrAddName.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); addCategory(); } });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && catMgrOverlay.classList.contains('open')) closeCatMgr(); });
 
   function shiftDay(delta){ const d = new Date(activeDate); d.setDate(d.getDate()+delta); activeDate=d; refresh(); }
   document.getElementById('calPrev').addEventListener('click', ()=>shiftDay(-1));
@@ -736,13 +1047,12 @@
 
   function renderLegend(){
     legendEl.innerHTML='';
-    for(const key of CAT_ORDER){
-      const c = CATS[key];
+    loadCategories().forEach(c=>{
       const item = document.createElement('span');
       item.className='cal-leg';
-      item.innerHTML='<span class="cal-leg-dot" style="background:'+c.color+'"></span>'+c.label;
+      item.innerHTML='<span class="cal-leg-dot" style="background:'+c.color+'"></span>'+escAttr(c.label);
       legendEl.appendChild(item);
-    }
+    });
   }
 
   function refresh(){ renderHeader(); render(); }
@@ -801,13 +1111,19 @@
     }
   });
 
-  // Expose render so the cloud-sync onApplied callback can trigger a re-render
-  // in the same tab (storage events from localStorage.setItem don't fire in the
-  // originating tab, so the storage listener below can't catch same-tab sync).
-  window._scheduleRender = render;
+  // Expose a re-render entry point so the cloud-sync onApplied callback can
+  // refresh in the same tab (storage events from localStorage.setItem don't
+  // fire in the originating tab, so the storage listener below can't catch
+  // same-tab sync). Also refreshes the legend/chips in case a synced change
+  // touched categories, not just blocks.
+  window._scheduleRender = refreshCategoryDependentUI;
 
-  // Re-render when another tab writes schedule data (e.g. cloud sync applies)
-  window.addEventListener('storage', (e)=>{ if(e.key && e.key.startsWith('schedule:')) render(); });
+  // Re-render when another tab writes schedule or category data (e.g. cloud sync applies)
+  window.addEventListener('storage', (e)=>{
+    if(!e.key) return;
+    if(e.key.startsWith('schedule:')) render();
+    else if(e.key === CATS_KEY) refreshCategoryDependentUI();
+  });
 
 })();
 </script>
@@ -817,6 +1133,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof initCloudSync !== 'function') return;
   initCloudSync({
     appKey: 'schedule',
+    syncedKeys: ['dayplanner_categories'],
     syncedPrefixes: ['schedule:'],
     onApplied: function () { if(typeof window._scheduleRender === 'function') window._scheduleRender(); }
   });
