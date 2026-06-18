@@ -130,7 +130,12 @@ html, body { -webkit-text-size-adjust: 100%; }
 .modal-bg, .modal, .po-modal-bg, .po-modal, .wt-overlay, .wt-viewer {
   overscroll-behavior: contain;
 }
-body.topbar-modal-open { overflow: hidden; touch-action: none; }
+/* overflow:hidden alone is enough to lock background scroll on modern mobile
+   browsers. touch-action:none was removed — it computes as the intersection
+   with descendant elements, so it was also blocking touch-scroll inside any
+   modal's own overflow-y:auto content (e.g. the Fitness tab's Add Exercise
+   form), not just the page behind it. */
+body.topbar-modal-open { overflow: hidden; }
 @media (max-width: 480px) {
   .modal-bg, .po-modal-bg {
     padding: 0 !important;

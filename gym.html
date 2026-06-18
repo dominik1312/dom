@@ -556,6 +556,13 @@ img, video, canvas, svg { max-width: 100%; }
   border-radius: 16px;
   padding: 22px; max-height: 88vh; overflow-y: auto;
 }
+/* Add Exercise form is the tallest modal in this tab and the one most likely
+   to need scrolling on mobile. Scoped to this modal only — explicit touch
+   handling so a vertical drag here is always treated as scroll. */
+#exModalBg .po-modal {
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
 .po-modal h3 {
   margin: 0 0 16px; font-size: 17px; font-weight: 700;
 }
@@ -2358,6 +2365,16 @@ img, video, canvas, svg { max-width: 100%; }
     $('exStepField').style.display = isBw ? 'none' : '';
   }
   $('exBw').addEventListener('change', toggleBwFields);
+  // Keep the scroll gesture inside the form from bubbling to the backdrop —
+  // with the page-level scroll lock active while this modal is open, a
+  // touchmove that escapes can otherwise be picked up as a different
+  // gesture (e.g. edge swipe) instead of just scrolling the form.
+  (() => {
+    const exModalPanel = $('exModalBg').querySelector('.po-modal');
+    if (exModalPanel) {
+      exModalPanel.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+    }
+  })();
   $('addExBtn').addEventListener('click', () => openExModal('add'));
   $('editExBtn').addEventListener('click', () => {
     const ex = getCurrentEx();
