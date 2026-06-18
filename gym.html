@@ -2368,11 +2368,13 @@ img, video, canvas, svg { max-width: 100%; }
   // Keep the scroll gesture inside the form from bubbling to the backdrop —
   // with the page-level scroll lock active while this modal is open, a
   // touchmove that escapes can otherwise be picked up as a different
-  // gesture (e.g. edge swipe) instead of just scrolling the form.
+  // gesture (e.g. edge swipe) instead of just scrolling the form. Mirrored
+  // for desktop mouse-wheel scrolling via the 'wheel' event below.
   (() => {
     const exModalPanel = $('exModalBg').querySelector('.po-modal');
     if (exModalPanel) {
       exModalPanel.addEventListener('touchmove', (e) => e.stopPropagation(), { passive: true });
+      exModalPanel.addEventListener('wheel', (e) => e.stopPropagation(), { passive: true });
     }
   })();
   $('addExBtn').addEventListener('click', () => openExModal('add'));
