@@ -1843,18 +1843,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:14px">
       <div>
         <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;font-weight:500">Total net worth</div>
-        <div id="netWorthTotal" style="font-size:34px;font-weight:700;color:var(--text-primary);line-height:1.05;margin-top:2px">CHF 0</div>
+        <div id="netWorthTotal" style="font-size:34px;font-weight:700;color:var(--text-primary);line-height:1.05;margin-top:2px">HUF 0</div>
         <div id="netWorthBreakdown" style="font-size:11px;color:var(--text-tertiary);margin-top:4px"></div>
       </div>
       <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-size:11px;color:var(--text-tertiary)">CHF</span>
-        <select id="netWorthCurrency" style="background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:12px;font-family:inherit;cursor:pointer">
-          <option value="CHF">CHF</option>
-          <option value="EUR">EUR</option>
-          <option value="USD">USD</option>
-          <option value="GBP">GBP</option>
-          <option value="HUF">HUF</option>
-        </select>
+        <span style="font-size:12px;color:var(--text-secondary);font-weight:600;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:5px 10px">HUF</span>
       </div>
     </div>
 
@@ -1939,7 +1932,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div id="bankList" class="nw-list"></div>
         <div class="quick-add">
           <input type="text" placeholder="Account name" id="bankName" />
-          <input type="number" placeholder="Amount" id="bankAmount" step="0.01" />
+          <input type="number" placeholder="Amount" id="bankAmount" step="1" />
           <button class="quick-add-btn" id="bankAddBtn">+</button>
         </div>
       </div>
@@ -1949,7 +1942,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div id="stocksList" class="nw-list"></div>
         <div class="quick-add">
           <input type="text" placeholder="Stock / fund" id="stocksName" />
-          <input type="number" placeholder="Value" id="stocksAmount" step="0.01" />
+          <input type="number" placeholder="Value" id="stocksAmount" step="1" />
           <button class="quick-add-btn" id="stocksAddBtn">+</button>
         </div>
       </div>
@@ -1959,7 +1952,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div id="cryptoList" class="nw-list"></div>
         <div class="quick-add">
           <input type="text" placeholder="Coin / wallet" id="cryptoName" />
-          <input type="number" placeholder="Value" id="cryptoAmount" step="0.01" />
+          <input type="number" placeholder="Value" id="cryptoAmount" step="1" />
           <button class="quick-add-btn" id="cryptoAddBtn">+</button>
         </div>
       </div>
@@ -1969,7 +1962,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         <div id="otherList" class="nw-list"></div>
         <div class="quick-add">
           <input type="text" placeholder="Asset name" id="otherName" />
-          <input type="number" placeholder="Value" id="otherAmount" step="0.01" />
+          <input type="number" placeholder="Value" id="otherAmount" step="1" />
           <button class="quick-add-btn" id="otherAddBtn">+</button>
         </div>
       </div>
@@ -1986,7 +1979,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
       <div>
         <div style="font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.04em;font-weight:500">Monthly burn</div>
-        <div id="subsTotal" style="font-size:28px;font-weight:700;color:var(--text-primary);line-height:1.1;margin-top:2px">CHF 0 <span style="font-size:13px;color:var(--text-tertiary);font-weight:500">/ mo</span></div>
+        <div id="subsTotal" style="font-size:28px;font-weight:700;color:var(--text-primary);line-height:1.1;margin-top:2px">HUF 0 <span style="font-size:13px;color:var(--text-tertiary);font-weight:500">/ mo</span></div>
         <div id="subsYearly" style="font-size:11px;color:var(--text-tertiary);margin-top:2px"></div>
       </div>
       <div id="subsCount" style="font-size:11px;color:var(--text-tertiary)"></div>
@@ -1995,14 +1988,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div class="empty-state" id="subsEmpty">No subscriptions yet</div>
     <div class="quick-add" style="flex-wrap:wrap;gap:6px">
       <input type="text" placeholder="Service (e.g. Netflix)" id="subName" style="flex:1.5;min-width:120px" />
-      <input type="number" placeholder="Amount" id="subAmount" step="0.01" style="flex:1;max-width:100px" />
-      <select id="subCurrency" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:90px">
-        <option value="CHF">CHF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="HUF">HUF</option>
-      </select>
+      <input type="number" placeholder="Amount" id="subAmount" step="1" style="flex:1;max-width:100px" />
+      <span style="display:flex;align-items:center;padding:6px 10px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--bg-card);border:0.5px solid var(--border);border-radius:var(--radius-md)">HUF</span>
       <select id="subPeriod" style="padding:6px 10px;border:0.5px solid var(--border);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);max-width:100px">
         <option value="monthly">Monthly</option>
         <option value="yearly">Yearly</option>
@@ -2033,14 +2020,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div class="ord-add-eyebrow">+ NEW ORDER</div>
     <div class="ord-add-grid">
       <input type="text"   id="ordName"   placeholder="Item (e.g. New iPhone)" class="ord-input ord-input-name">
-      <input type="number" id="ordCost"   placeholder="Cost" step="0.01" class="ord-input ord-input-cost">
-      <select id="ordCurrency" class="ord-input ord-input-ccy">
-        <option value="CHF">CHF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="HUF">HUF</option>
-      </select>
+      <input type="number" id="ordCost"   placeholder="Cost" step="1" class="ord-input ord-input-cost">
+      <span class="ord-input ord-input-ccy" style="display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--text-secondary)">HUF</span>
       <select id="ordFromCat" class="ord-input ord-input-from" title="Which net worth account this comes out of">
         <option value="">No accounts yet</option>
       </select>
@@ -2073,7 +2054,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div class="wish-hero-top">
       <div>
         <div class="wish-hero-eyebrow">WISHLIST TOTAL</div>
-        <div class="wish-hero-num" id="wishTotal">CHF 0</div>
+        <div class="wish-hero-num" id="wishTotal">HUF 0</div>
       </div>
       <div class="wish-hero-pct-wrap">
         <div class="wish-hero-pct-label">% OF NET WORTH</div>
@@ -2091,14 +2072,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     <div class="wish-add-eyebrow">+ ADD AN ITEM</div>
     <div class="wish-add-row">
       <input type="text"   id="wishName"   placeholder="Item name (e.g. New iPhone Pro Max)" class="wish-input wish-input-name">
-      <input type="number" id="wishAmount" placeholder="Cost" step="0.01" class="wish-input wish-input-amt">
-      <select id="wishCurrency" class="wish-input wish-input-ccy">
-        <option value="CHF">CHF</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="HUF">HUF</option>
-      </select>
+      <input type="number" id="wishAmount" placeholder="Cost" step="1" class="wish-input wish-input-amt">
+      <span class="wish-input wish-input-ccy" style="display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--text-secondary)">HUF</span>
       <button class="wish-add-btn" id="wishAddBtn" onclick="window.__addWish && window.__addWish()">+ Add</button>
     </div>
   </div>
@@ -2154,14 +2129,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     </div>
     <div class="txn-add-grid" id="txnAddGrid">
       <input id="txnDesc"     class="txn-input txn-input-name" type="text"   placeholder="Description (e.g. Groceries)" autocomplete="off" />
-      <input id="txnAmount"   class="txn-input txn-input-cost" type="number" placeholder="Amount" step="0.01" min="0" />
-      <select id="txnCurrency" class="txn-select">
-        <option value="CHF">CHF</option>
-        <option value="EUR">EUR</option>
-        <option value="USD">USD</option>
-        <option value="GBP">GBP</option>
-        <option value="HUF">HUF</option>
-      </select>
+      <input id="txnAmount"   class="txn-input txn-input-cost" type="number" placeholder="Amount" step="1" min="0" />
+      <span class="txn-select" style="display:flex;align-items:center;justify-content:center;font-weight:600;color:var(--text-secondary)">HUF</span>
       <select id="txnCategory" class="txn-select"></select>
       <label class="date-field" style="padding:6px 8px">
         <span style="font-size:14px;flex-shrink:0">📅</span>
@@ -2259,134 +2228,64 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // ============================================================
   // NET WORTH (copied from the main dashboard, verbatim logic)
   // ============================================================
-  const CURRENCY_KEY = 'nw_currency';
   const NW_CATS = [
     { key: 'bank',   listId: 'bankList',   totalId: 'bankTotal',   nameId: 'bankName',   amtId: 'bankAmount',   addId: 'bankAddBtn' },
     { key: 'stocks', listId: 'stocksList', totalId: 'stocksTotal', nameId: 'stocksName', amtId: 'stocksAmount', addId: 'stocksAddBtn' },
     { key: 'crypto', listId: 'cryptoList', totalId: 'cryptoTotal', nameId: 'cryptoName', amtId: 'cryptoAmount', addId: 'cryptoAddBtn' },
     { key: 'other',  listId: 'otherList',  totalId: 'otherTotal',  nameId: 'otherName',  amtId: 'otherAmount',  addId: 'otherAddBtn' }
   ];
-  const currencyEl = document.getElementById('netWorthCurrency');
   const netWorthTotal = document.getElementById('netWorthTotal');
   const netWorthBreakdown = document.getElementById('netWorthBreakdown');
 
-  let exchangeRates = { CHF: 1, USD: 1, EUR: 1, GBP: 1, HUF: 1 };
-  async function loadExchangeRates() {
-    try {
-      const res = await fetch('https://open.er-api.com/v6/latest/CHF');
-      const data = await res.json();
-      if (data && data.rates) {
-        exchangeRates = {
-          CHF: 1,
-          USD: data.rates.USD || 1,
-          EUR: data.rates.EUR || 1,
-          GBP: data.rates.GBP || 1,
-          HUF: data.rates.HUF || 1
-        };
-        migrateSubsEnteredAmounts();
-        migrateNwEnteredAmounts();
-        migrateWishlistEnteredAmounts();
-        migrateOrdersEnteredAmounts();
-        renderAllNetWorth();
-        if (typeof renderSubs === 'function') renderSubs();
-        if (typeof renderTransactions === 'function') renderTransactions();
-      }
-    } catch (e) {}
-  }
-  loadExchangeRates();
-
-  // One-time migration: backfill entered_amount/entered_currency for any
-  // subscription that was saved before those fields existed.
-  // Runs after exchange rates load so the conversion uses real rates, not fallback 1s.
-  // Idempotent — items that already have entered_amount are skipped.
-  function migrateSubsEnteredAmounts() {
-    const items = storeGet('subs');
-    if (!items || !items.length) return;
-    let changed = false;
-    items.forEach(it => {
-      if (it.entered_amount != null) return;
-      const ccy = it.entered_currency || 'CHF';
-      const rate = exchangeRates[ccy] || 1;
-      const raw = (Number(it.amount) || 0) * rate;
-      it.entered_amount = (raw % 1 === 0 || rate >= 100) ? Math.round(raw) : Math.round(raw * 100) / 100;
-      it.entered_currency = ccy;
-      changed = true;
-    });
-    if (changed) storeSet('subs', items);
-  }
-
-  // NW items were always saved as { name, amount } with no entered fields.
-  // Backfill using the current display currency so per-item amounts stabilise
-  // immediately after the first load with fresh rates.
-  function migrateNwEnteredAmounts() {
-    const sym = currencyEl ? currencyEl.value : 'CHF';
-    const rate = exchangeRates[sym] || 1;
-    NW_CATS.forEach(cat => {
-      const items = storeGet('nw:' + cat.key) || [];
-      let changed = false;
-      items.forEach(it => {
-        if (it.entered_amount != null) return;
-        const raw = (Number(it.amount) || 0) * rate;
-        it.entered_amount = (raw % 1 === 0 || rate >= 100) ? Math.round(raw) : Math.round(raw * 100) / 100;
-        it.entered_currency = sym;
-        changed = true;
-      });
-      if (changed) storeSet('nw:' + cat.key, items);
-    });
-  }
-
-  // Wishlist items already store entered_amount/entered_currency on new saves.
-  // This backfills legacy items that pre-date those fields.
-  function migrateWishlistEnteredAmounts() {
-    const items = storeGet('wishlist');
-    if (!items || !items.length) return;
-    let changed = false;
-    const sym = currencyEl ? currencyEl.value : 'CHF';
-    const rate = exchangeRates[sym] || 1;
-    items.forEach(it => {
-      if (it.entered_amount != null) return;
-      const raw = (Number(it.amount) || 0) * rate;
-      it.entered_amount = (raw % 1 === 0 || rate >= 100) ? Math.round(raw) : Math.round(raw * 100) / 100;
-      it.entered_currency = sym;
-      changed = true;
-    });
-    if (changed) storeSet('wishlist', items);
-  }
-
-  // Same for incoming orders.
-  function migrateOrdersEnteredAmounts() {
-    const items = storeGet('incoming_orders');
-    if (!items || !items.length) return;
-    let changed = false;
-    const sym = currencyEl ? currencyEl.value : 'CHF';
-    const rate = exchangeRates[sym] || 1;
-    items.forEach(it => {
-      if (it.entered_amount != null) return;
-      const raw = (Number(it.amount) || 0) * rate;
-      it.entered_amount = (raw % 1 === 0 || rate >= 100) ? Math.round(raw) : Math.round(raw * 100) / 100;
-      it.entered_currency = sym;
-      changed = true;
-    });
-    if (changed) storeSet('incoming_orders', items);
-  }
-
-  function fmtMoney(amountCHF) {
-    const symbol = currencyEl ? currencyEl.value : 'CHF';
-    const rate = exchangeRates[symbol] || 1;
-    const num = (Number(amountCHF) || 0) * rate;
-    return symbol + ' ' + num.toLocaleString('en-US', { minimumFractionDigits: num % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
-  }
-  // Stable per-item display: if the item was entered in the current display
-  // currency, return entered_amount directly (zero rate-conversion, no drift).
-  // Otherwise fall back to live-rate conversion from CHF.
-  // Used for NW items, wishlist, and orders — NOT for cross-currency aggregates.
-  function fmtEntered(it, amountCHF) {
-    const dispCcy = currencyEl ? currencyEl.value : 'CHF';
-    if (it.entered_currency && it.entered_currency === dispCcy && it.entered_amount != null) {
-      const n = Number(it.entered_amount);
-      return dispCcy + ' ' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
+  // ============================================================
+  // SINGLE-CURRENCY MIGRATION (HUF only) — this app used to support
+  // CHF/EUR/USD/GBP via a live exchange-rate fetch on every load, with
+  // amounts stored as a CHF-equivalent and converted to the selected
+  // display currency at render time. That's gone: amounts are now stored
+  // and displayed as plain HUF integers, with NO conversion of any kind,
+  // ever. This migration runs once (guarded by MIGRATION_FLAG) to fold
+  // any pre-existing entered_amount/entered_currency data into a correct
+  // raw-HUF `amount`, then is never needed again — no network fetch.
+  // Legacy entries that were genuinely entered in another currency (rare,
+  // pre-dates this dashboard being HUF-only) are converted with a fixed
+  // approximate rate, since this is one-time historical cleanup, not
+  // ongoing conversion logic.
+  // ============================================================
+  const MIGRATION_FLAG = 'fin:huf_only_migrated_v1';
+  const LEGACY_HUF_PER_UNIT = { CHF: 390, EUR: 405, USD: 365, GBP: 470, HUF: 1 };
+  function resolveHufAmount(it) {
+    if (it.entered_currency === 'HUF' && it.entered_amount != null) {
+      return Math.round(Number(it.entered_amount));
     }
-    return fmtMoney(amountCHF);
+    if (it.entered_amount != null && it.entered_currency) {
+      return Math.round(Number(it.entered_amount) * (LEGACY_HUF_PER_UNIT[it.entered_currency] || 1));
+    }
+    // Oldest legacy shape — no entered_* fields at all. `amount` was a
+    // CHF-equivalent; approximate using the same fixed rate.
+    return Math.round((Number(it.amount) || 0) * LEGACY_HUF_PER_UNIT.CHF);
+  }
+  function migrateArrayToHuf(key) {
+    const items = storeGet(key);
+    if (!items || !items.length) return;
+    items.forEach(it => { it.amount = resolveHufAmount(it); });
+    storeSet(key, items);
+  }
+  function runHufOnlyMigration() {
+    if (storeGet(MIGRATION_FLAG)) return;
+    NW_CATS.forEach(cat => migrateArrayToHuf('nw:' + cat.key));
+    migrateArrayToHuf('subs');
+    migrateArrayToHuf('wishlist');
+    migrateArrayToHuf('incoming_orders');
+    storeSet(MIGRATION_FLAG, true);
+  }
+  runHufOnlyMigration();
+
+  // No display currency, no rate, ever. Whole-number HUF only — this is
+  // the single rounding rule every derived total in the app uses, so
+  // sums/percentages/multiples always agree exactly with what's displayed.
+  function fmtMoney(amountHuf) {
+    const num = Math.round(Number(amountHuf) || 0);
+    return 'HUF ' + num.toLocaleString('en-US');
   }
 
   function renderNetWorthCategory(cat) {
@@ -2406,7 +2305,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       name.addEventListener('click', () => beginNwNameEdit(name, items, idx, cat.key));
       const amt = document.createElement('span');
       amt.className = 'nw-amt nw-amt-edit';
-      amt.textContent = fmtEntered(it, it.amount);
+      amt.textContent = fmtMoney(it.amount);
       amt.title = 'Tap to edit · type +500 to add, -200 to subtract, or a new total';
       amt.addEventListener('click', () => beginNwAmountEdit(amt, items, idx, cat.key));
       const del = document.createElement('button'); del.className = 'nw-del'; del.textContent = '×';
@@ -2425,18 +2324,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   function beginNwAmountEdit(amtEl, items, idx, catKey) {
     if (amtEl.querySelector('input')) return;
-    const symbol = currencyEl ? currencyEl.value : 'CHF';
-    const rate = exchangeRates[symbol] || 1;
-    const curCHF = Number(items[idx].amount) || 0;
-    // Show the stable entered amount when it was recorded in the current display
-    // currency so the edit field doesn't open with a drifted value.
-    const curDisplay = (items[idx].entered_currency === symbol && items[idx].entered_amount != null)
-      ? Number(items[idx].entered_amount)
-      : curCHF * rate;
+    const curHuf = Math.round(Number(items[idx].amount) || 0);
     const input = document.createElement('input');
     input.type = 'text';
     input.inputMode = 'decimal';
-    input.value = String(curDisplay.toFixed(curDisplay % 1 === 0 ? 0 : 2));
+    input.value = String(curHuf);
     input.style.cssText = 'width:110px;padding:4px 8px;font-family:var(--font-mono);font-size:12px;background:rgba(0,0,0,0.30);border:1px solid rgba(255,255,255,0.10);color:var(--text-primary);border-radius:6px;text-align:right;font-variant-numeric:tabular-nums;outline:none;';
     amtEl.textContent = '';
     amtEl.appendChild(input);
@@ -2446,24 +2338,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       if (saved) return; saved = true;
       const v = input.value.trim();
       if (v === '') { renderAllNetWorth(); return; }
-      // Input is in the DISPLAY currency. Convert back to CHF before storing.
-      let nextDisplay = curDisplay;
+      let nextHuf = curHuf;
       if (/^[+\-]\s*\d/.test(v)) {
         const delta = parseFloat(v.replace(/\s+/g, ''));
-        if (!isNaN(delta)) nextDisplay = curDisplay + delta;
+        if (!isNaN(delta)) nextHuf = curHuf + delta;
       } else {
         const n = parseFloat(v);
-        if (!isNaN(n)) nextDisplay = n;
+        if (!isNaN(n)) nextHuf = n;
       }
-      if (nextDisplay < 0) nextDisplay = 0;
-      const nextCHF = nextDisplay / rate;
-      const deltaCHF = nextCHF - curCHF;
-      items[idx].amount = nextCHF;
-      items[idx].entered_amount = nextDisplay;
-      items[idx].entered_currency = symbol;
+      if (nextHuf < 0) nextHuf = 0;
+      nextHuf = Math.round(nextHuf);
+      const deltaHuf = nextHuf - curHuf;
+      items[idx].amount = nextHuf;
       storeSet('nw:' + catKey, items);
-      if (Math.abs(deltaCHF) > 0.005) {
-        logActivity(catKey, items[idx].name, deltaCHF, 'edit');
+      if (deltaHuf !== 0) {
+        logActivity(catKey, items[idx].name, deltaHuf, 'edit');
       }
       renderAllNetWorth();
     }
@@ -2521,7 +2410,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 
   // ============================================================
-  // ACTIVITY LOG — every add / edit / delete with delta in CHF.
+  // ACTIVITY LOG — every add / edit / delete with delta in HUF.
   // Renders newest first. Cap at 50.
   // ============================================================
   const ACTIVITY_KEY = 'nw:activity';
@@ -2686,11 +2575,47 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // Net-worth history chart
   const NW_HISTORY_KEY = 'nw:history';
   const NW_HISTORY_MAX = 500;
-  function logNetWorthSnapshot(grandCHF) {
-    const v = Number(grandCHF) || 0;
+  const NW_HISTORY_SANITIZE_FLAG = 'fin:nw_history_sanitized_v1';
+  // One-time cleanup: a handful of bad/test snapshots (e.g. from before the
+  // HUF-only migration, or stray typos with an extra digit) can sit in
+  // history at 10-200x the surrounding values, which distorts the All-Time
+  // chart scale, the All-Time High/Low stats, and "1% =". Use a median-based
+  // outlier filter (anything more than 10x away from the median) — runs
+  // once, guarded by a flag, and always keeps the most recent point intact
+  // since that reflects current reality regardless of how far it is from
+  // older history.
+  function sanitizeNwHistory() {
+    if (storeGet(NW_HISTORY_SANITIZE_FLAG)) return;
+    const hist = storeGet(NW_HISTORY_KEY) || [];
+    if (hist.length >= 3) {
+      const sorted = hist.map(p => Number(p.v) || 0).slice().sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)];
+      if (median > 0) {
+        const lo = median / 10, hi = median * 10;
+        const lastIdx = hist.length - 1;
+        const cleaned = hist.filter((p, i) => i === lastIdx || (p.v >= lo && p.v <= hi));
+        if (cleaned.length !== hist.length) storeSet(NW_HISTORY_KEY, cleaned);
+      }
+    }
+    storeSet(NW_HISTORY_SANITIZE_FLAG, true);
+  }
+  sanitizeNwHistory();
+
+  function logNetWorthSnapshot(grandHuf) {
+    const v = Number(grandHuf) || 0;
     const hist = storeGet(NW_HISTORY_KEY) || [];
     const last = hist[hist.length - 1];
-    if (last && Math.abs((last.v || 0) - v) < 0.005) return;
+    if (last && Math.abs((last.v || 0) - v) < 0.5) return;
+    // Soft forward-guard: once there's enough history to judge from, reject
+    // a new snapshot that's a wild (50x+) jump from the recent median —
+    // almost certainly a glitch, not a real net-worth swing. Generous
+    // threshold so legitimate large additions (e.g. logging a full stock
+    // portfolio at once) still go through.
+    if (hist.length >= 5) {
+      const recent = hist.slice(-10).map(p => Number(p.v) || 0).sort((a, b) => a - b);
+      const median = recent[Math.floor(recent.length / 2)];
+      if (median > 0 && (v > median * 50 || v < median / 50)) return;
+    }
     hist.push({ t: Date.now(), v: v });
     if (hist.length > NW_HISTORY_MAX) hist.splice(0, hist.length - NW_HISTORY_MAX);
     storeSet(NW_HISTORY_KEY, hist);
@@ -2779,7 +2704,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 
   // Stats overlay — what 1% is worth, all-time high/low, snapshot count.
-  // Reads the snapshot history (CHF base) and converts to display currency.
+  // Reads the snapshot history — plain HUF values, no conversion.
   function renderChartStats(hist) {
     const oneEl   = document.getElementById('nwStat1pct');
     const highEl  = document.getElementById('nwStatHigh');
@@ -2812,16 +2737,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const n = nameInput.value.trim();
       const a = parseFloat(amtInput.value);
       if (!n || isNaN(a)) return;
-      // Interpret the input in the CURRENTLY SELECTED display currency, then
-      // convert to CHF for storage. So if USD is selected and user types 40000,
-      // we store 40000 / USD-per-CHF rate — 31,400 CHF; displays as $40,000.
-      const symbol = currencyEl ? currencyEl.value : 'CHF';
-      const rate = exchangeRates[symbol] || 1;
-      const amountCHF = a / rate;
+      const amountHuf = Math.round(a);
       const items = storeGet('nw:' + cat.key) || [];
-      items.push({ name: n, amount: amountCHF, entered_amount: a, entered_currency: symbol });
+      items.push({ name: n, amount: amountHuf });
       storeSet('nw:' + cat.key, items);
-      logActivity(cat.key, n, amountCHF, 'add');
+      logActivity(cat.key, n, amountHuf, 'add');
       nameInput.value = ''; amtInput.value = '';
       renderAllNetWorth();
     }
@@ -2830,15 +2750,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     amtInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
   });
 
-  if (currencyEl) {
-    const savedCur = storeGet(CURRENCY_KEY);
-    if (savedCur) currencyEl.value = savedCur;
-    currencyEl.addEventListener('change', () => {
-      storeSet(CURRENCY_KEY, currencyEl.value);
-      renderAllNetWorth();
-      renderSubs();
-    });
-  }
   renderAllNetWorth();
 
   // ============================================================
@@ -2941,26 +2852,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         metaLine;
       const cost = document.createElement('div');
       cost.style.cssText = 'text-align:right;line-height:1.1';
-      // Big number: always show in the currency the user entered.
-      // For non-CHF subs, compute the per-month equivalent in the original
-      // currency so "60 000 HUF/year" shows "HUF 5 000 / month".
-      let bigNum;
-      if (it.entered_currency && it.entered_currency !== 'CHF' && it.entered_amount != null) {
-        const enteredMonthly = it.period === 'yearly' ? Number(it.entered_amount) / 12
-                             : it.period === 'weekly' ? Number(it.entered_amount) * 4.345
-                             : Number(it.entered_amount);
-        bigNum = it.entered_currency + ' ' + enteredMonthly.toLocaleString('en-US', {
-          minimumFractionDigits: enteredMonthly % 1 === 0 ? 0 : 2, maximumFractionDigits: 2
-        });
-      } else {
-        bigNum = fmtMoney(m);
-      }
-      // "Billed" hint: original billing cadence for non-monthly or non-CHF
-      const origHint = (it.entered_currency && it.entered_currency !== 'CHF' && it.entered_amount != null && it.period !== 'monthly')
-        ? '<div style="font-size:10px;color:var(--text-tertiary);margin-top:2px">billed ' + it.entered_currency + ' ' + Number(it.entered_amount).toLocaleString('en-US', { minimumFractionDigits: it.entered_amount % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 }) + ' / ' + it.period + '</div>'
-        : (it.period !== 'monthly' && !(it.entered_currency && it.entered_currency !== 'CHF')
-            ? '<div style="font-size:10px;color:var(--text-tertiary);margin-top:2px">billed ' + fmtMoney(it.amount) + ' / ' + it.period + '</div>'
-            : '');
+      // Big number: monthly-equivalent in HUF, same rounding fmtMoney uses
+      // everywhere else so this always agrees with the aggregate burn total.
+      const bigNum = fmtMoney(m);
+      // "Billed" hint: original per-period amount, shown for non-monthly subs.
+      const origHint = it.period !== 'monthly'
+        ? '<div style="font-size:10px;color:var(--text-tertiary);margin-top:2px">billed ' + fmtMoney(it.amount) + ' / ' + it.period + '</div>'
+        : '';
       cost.innerHTML = '<div style="font-size:20px;font-weight:700;color:var(--text-primary);font-variant-numeric:tabular-nums">' + bigNum + '</div>' +
         '<div style="font-size:10px;color:var(--text-tertiary);margin-top:1px">/ month</div>' +
         origHint;
@@ -3000,8 +2898,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         renderSubs();
       });
     });
-    subsTotal.innerHTML = fmtMoney(monthly) + ' <span style="font-size:13px;color:var(--text-tertiary);font-weight:500">/ mo</span>';
-    subsYearly.textContent = '~' + fmtMoney(monthly * 12) + ' per year';
+    // Round the monthly burn ONCE, then derive yearly from that same rounded
+    // value — guarantees the displayed yearly figure is always exactly 12x
+    // the displayed monthly figure, with no independent rounding drift.
+    const monthlyRounded = Math.round(monthly);
+    subsTotal.innerHTML = fmtMoney(monthlyRounded) + ' <span style="font-size:13px;color:var(--text-tertiary);font-weight:500">/ mo</span>';
+    subsYearly.textContent = fmtMoney(monthlyRounded * 12) + ' per year';
     subsCount.textContent = items.length + (items.length === 1 ? ' subscription' : ' subscriptions');
     // Re-render the donut so the subs slice updates with the latest annualized total
     if (typeof renderAllNetWorth === 'function') renderAllNetWorth();
@@ -3092,13 +2994,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const rows = subsList.querySelectorAll('.sub-row');
     const row = rows[idx];
     if (!row) return;
-    const enteredCcy = it.entered_currency || 'CHF';
-    const enteredAmt = it.entered_amount != null ? it.entered_amount : it.amount;
     const periodOpts = ['monthly','yearly','weekly'].map(p =>
       '<option value="' + p + '"' + (p === it.period ? ' selected' : '') + '>' + p.charAt(0).toUpperCase() + p.slice(1) + '</option>'
-    ).join('');
-    const ccyOpts = ['CHF','USD','EUR','GBP','HUF'].map(c =>
-      '<option value="' + c + '"' + (c === enteredCcy ? ' selected' : '') + '>' + c + '</option>'
     ).join('');
     // Build From-account options from the live NW accounts
     const accounts = (typeof listAllNwAccounts === 'function') ? listAllNwAccounts() : [];
@@ -3115,8 +3012,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     form.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;align-items:center';
     form.innerHTML =
       '<input type="text" class="se-name" value="' + escapeHtml(it.name) + '" style="flex:1.5;min-width:120px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary)" />' +
-      '<input type="number" step="0.01" class="se-amt" value="' + Number(enteredAmt).toFixed(2) + '" style="width:90px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary)" />' +
-      '<select class="se-ccy" style="padding:6px 10px;border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary)">' + ccyOpts + '</select>' +
+      '<input type="number" step="1" class="se-amt" value="' + Math.round(Number(it.amount)) + '" style="width:90px;padding:6px 10px;border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary)" />' +
+      '<span style="padding:6px 10px;font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--bg-card);border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md)">HUF</span>' +
       '<select class="se-per" style="padding:6px 10px;border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary)">' + periodOpts + '</select>' +
       '<label class="date-field" style="min-width:140px"><span class="date-emoji" aria-hidden="true">📅</span><input type="date" class="se-ren" value="' + (it.renewal && /^\d{4}-\d{2}-\d{2}/.test(it.renewal) ? it.renewal.slice(0,10) : '') + '" /></label>' +
       '<select class="se-from" style="padding:6px 10px;border:0.5px solid rgba(255,255,255,0.10);border-radius:var(--radius-md);font-size:12px;font-family:inherit;background:var(--bg-card);color:var(--text-primary);min-width:130px">' + fromOpts + '</select>' +
@@ -3127,7 +3024,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     const save = () => {
       const newName = row.querySelector('.se-name').value.trim();
       const newAmtRaw = parseFloat(row.querySelector('.se-amt').value);
-      const newCcy = row.querySelector('.se-ccy').value;
       const newPer = row.querySelector('.se-per').value;
       const newRen = row.querySelector('.se-ren').value || null;
       const newFromVal = row.querySelector('.se-from').value;
@@ -3142,8 +3038,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         return;
       }
       if (!newName || isNaN(newAmtRaw)) return;
-      const rate = exchangeRates[newCcy] || 1;
-      items[idx] = { ...it, name: newName, amount: newAmtRaw / rate, period: newPer, renewal: newRen, entered_amount: newAmtRaw, entered_currency: newCcy, fromCat: newFromCat, fromAccount: newFromAccount, autoDeduct: newAuto };
+      items[idx] = { ...it, name: newName, amount: Math.round(newAmtRaw), period: newPer, renewal: newRen, fromCat: newFromCat, fromAccount: newFromAccount, autoDeduct: newAuto };
       storeSet('subs', items); renderSubs();
     };
     const cancel = () => renderSubs();
@@ -3162,7 +3057,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     try {
       const nEl = document.getElementById('subName');
       const aEl = document.getElementById('subAmount');
-      const ccEl = document.getElementById('subCurrency');
       const pEl = document.getElementById('subPeriod');
       const rEl = document.getElementById('subRenewal');
       const fEl = document.getElementById('subFromCat');
@@ -3171,9 +3065,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       const n = (nEl.value || '').trim();
       const aRaw = parseFloat(aEl.value);
       if (!n || isNaN(aRaw)) { nEl.focus(); return; }
-      const enteredCcy = ccEl ? ccEl.value : 'CHF';
-      const rate = exchangeRates[enteredCcy] || 1;
-      const amountCHF = aRaw / rate;
+      const amountHuf = Math.round(aRaw);
       // Parse "From" selection — value is "catKey::accountName"
       let fromCat = null, fromAccount = null;
       if (fEl && fEl.value) {
@@ -3188,11 +3080,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       }
       const items = storeGet('subs') || [];
       items.push({
-        name: n, amount: amountCHF,
+        name: n, amount: amountHuf,
         period: pEl ? pEl.value : 'monthly',
         renewal: rEl && rEl.value ? rEl.value : null,
-        entered_amount: aRaw,
-        entered_currency: enteredCcy,
         fromCat: fromCat,
         fromAccount: fromAccount,
         autoDeduct: autoDeduct,
@@ -3213,7 +3103,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   // ============================================================
   // WISHLIST — items with % of net worth.
-  // Each item is { name, amountCHF, ts, ccy }. Stored in 'wishlist'.
+  // Each item is { name, amount (HUF), ts }. Stored in 'wishlist'.
   // Colors: <5% green, 5-25% amber, >25% red.
   // ============================================================
   // NOTE: don't use consts here — renderWishlist gets called from inside
@@ -3283,10 +3173,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
           '<div class="wish-row-h">'
         + '<div class="wish-row-info">'
         +   '<div class="wish-row-name">' + escapeHtml(it.name) + '</div>'
-        +   '<div class="wish-row-meta">' + (it.entered_currency || 'CHF') + ' ' + Number(it.entered_amount != null ? it.entered_amount : it.amount).toLocaleString('en-US', {maximumFractionDigits: 2}) + ' · added ' + fmtActivityDate(it.ts || Date.now()) + '</div>'
+        +   '<div class="wish-row-meta">added ' + fmtActivityDate(it.ts || Date.now()) + '</div>'
         + '</div>'
         + '<div class="wish-row-amt-wrap">'
-        +   '<div class="wish-row-amt">' + fmtEntered(it, cost) + '</div>'
+        +   '<div class="wish-row-amt">' + fmtMoney(cost) + '</div>'
         +   '<div class="wish-row-pct ' + cls + '">' + pctText + ' of NW</div>'
         + '</div>'
         + '<button class="wish-row-x" data-i="' + idx + '" aria-label="Remove">×</button>'
@@ -3308,18 +3198,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     try {
       const nEl = document.getElementById('wishName');
       const aEl = document.getElementById('wishAmount');
-      const cEl = document.getElementById('wishCurrency');
       if (!nEl || !aEl) return;
       const n = (nEl.value || '').trim();
       const aRaw = parseFloat(aEl.value);
       if (!n || isNaN(aRaw)) { nEl.focus(); return; }
-      const enteredCcy = cEl ? cEl.value : 'CHF';
-      const rate = exchangeRates[enteredCcy] || 1;
-      const amountCHF = aRaw / rate;
+      const amountHuf = Math.round(aRaw);
       const arr = storeGet('wishlist') || [];
       arr.push({
-        name: n, amount: amountCHF, ts: Date.now(),
-        entered_amount: aRaw, entered_currency: enteredCcy
+        name: n, amount: amountHuf, ts: Date.now()
       });
       storeSet('wishlist', arr);
       nEl.value = ''; aEl.value = '';
@@ -3352,7 +3238,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   });
 
   // ============================================================
-  // INCOMING ORDERS — full-spec: name, cost (CHF base), currency,
+  // INCOMING ORDERS — full-spec: name, cost (HUF),
   // fromCat, expectedDate, ts. Stored under 'incoming_orders'.
   // (ORD_FROM_META is declared at the top of this IIFE — see the
   // header — because renderOrders runs as part of the very first
@@ -3480,7 +3366,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       row.innerHTML =
           '<div class="ord-card-h">'
         +   '<div class="ord-card-name">' + escapeHtml(o.name) + '</div>'
-        +   '<div class="ord-card-amt">' + fmtEntered(o, cost) + '</div>'
+        +   '<div class="ord-card-amt">' + fmtMoney(cost) + '</div>'
         +   '<button class="ord-card-x" data-id="' + o.id + '" aria-label="Remove">×</button>'
         + '</div>'
         + '<div class="ord-card-meta">'
@@ -3509,7 +3395,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   // ============================================================
   // DEDUCT — open the inline chooser of NW accounts. Picking one
-  // subtracts the order amount from that account (in CHF), logs the
+  // subtracts the order amount from that account (in HUF), logs the
   // activity, freezes the order's % at the moment of deduction, and
   // marks the order as deducted (with no further % updates).
   // ============================================================
@@ -3615,7 +3501,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   // Live preview on the add card — updates as user types the cost
   function updateOrdPreview() {
     const costEl = document.getElementById('ordCost');
-    const ccyEl  = document.getElementById('ordCurrency');
     const fromEl = document.getElementById('ordFromCat');
     const prev   = document.getElementById('ordAddPreview');
     if (!prev) return;
@@ -3625,19 +3510,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       prev.className = 'ord-add-preview';
       return;
     }
-    const ccy = ccyEl ? ccyEl.value : 'CHF';
-    const rate = exchangeRates[ccy] || 1;
-    const amountCHF = aRaw / rate;
+    const amountHuf = Math.round(aRaw);
     const grand = nwGrandCHF();
     const parsed = parseFromValue(fromEl ? fromEl.value : '');
     const fromName = parsed.name || (ORD_FROM_META[parsed.cat] || ORD_FROM_META.bank).name;
     if (grand > 0) {
-      const pct = (amountCHF / grand) * 100;
+      const pct = (amountHuf / grand) * 100;
       const cls = ordPctClass(pct);
-      prev.textContent = fmtMoney(amountCHF) + ' from ' + fromName + ' · ' + pct.toFixed(2) + '% of your ' + fmtMoney(grand) + ' net worth';
+      prev.textContent = fmtMoney(amountHuf) + ' from ' + fromName + ' · ' + pct.toFixed(2) + '% of your ' + fmtMoney(grand) + ' net worth';
       prev.className = 'ord-add-preview ' + (cls === 'good' ? '' : cls);
     } else {
-      prev.textContent = fmtMoney(amountCHF) + ' from ' + fromName + ' · add net worth first to see %';
+      prev.textContent = fmtMoney(amountHuf) + ' from ' + fromName + ' · add net worth first to see %';
       prev.className = 'ord-add-preview';
     }
   }
@@ -3645,24 +3528,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     try {
       const nEl = document.getElementById('ordName');
       const aEl = document.getElementById('ordCost');
-      const cEl = document.getElementById('ordCurrency');
       const fEl = document.getElementById('ordFromCat');
       const dEl = document.getElementById('ordArrival');
       if (!nEl || !aEl) return;
       const n = (nEl.value || '').trim();
       const aRaw = parseFloat(aEl.value);
       if (!n || isNaN(aRaw)) { nEl.focus(); return; }
-      const ccy = cEl ? cEl.value : 'CHF';
-      const rate = exchangeRates[ccy] || 1;
-      const amountCHF = aRaw / rate;
+      const amountHuf = Math.round(aRaw);
       const parsed = parseFromValue(fEl ? fEl.value : '');
       const arr = storeGet('incoming_orders') || [];
       arr.push({
         id: 'o_' + Date.now() + '_' + Math.floor(Math.random() * 9999),
         name: n,
-        amount: amountCHF,
-        entered_amount: aRaw,
-        entered_currency: ccy,
+        amount: amountHuf,
         fromCat: parsed.cat || 'bank',
         fromAccount: parsed.name || null,    // the actual NW item the user picked
         date: dEl && dEl.value ? dEl.value : null,
@@ -3680,7 +3558,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
   window.__addOrder = doOrdAdd;
   // Wire live-preview listeners
-  ['ordCost','ordCurrency','ordFromCat'].forEach(id => {
+  ['ordCost','ordFromCat'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('input', updateOrdPreview);
     if (el) el.addEventListener('change', updateOrdPreview);
@@ -3728,8 +3606,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       out.push({
         name: s.name,
         amount: Number(s.amount) || 0,
-        enteredAmount: s.entered_amount,
-        enteredCcy: s.entered_currency,
         days,
         period: s.period
       });
@@ -3789,9 +3665,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             : 'in ' + e.days + 'd';
       return '<div class="ticker-item' + (i === tickerIdx ? ' active' : '') + '" data-i="' + i + '">'
         +   '<span class="ticker-item-name">' + escapeHtml(e.name) + '</span>'
-        +   '<span class="ticker-item-amt">' + (e.enteredCcy && e.enteredCcy !== 'CHF' && e.enteredAmount != null
-              ? e.enteredCcy + ' ' + Number(e.enteredAmount).toLocaleString('en-US', { minimumFractionDigits: e.enteredAmount % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 })
-              : fmtMoney(e.amount)) + '</span>'
+        +   '<span class="ticker-item-amt">' + fmtMoney(e.amount) + '</span>'
         +   '<span class="ticker-item-days">' + daysLabel + '</span>'
         + '</div>';
     }).join('');
@@ -3876,7 +3750,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   function doAddTransaction() {
     var descEl    = document.getElementById('txnDesc');
     var amtEl     = document.getElementById('txnAmount');
-    var ccyEl     = document.getElementById('txnCurrency');
     var catEl     = document.getElementById('txnCategory');
     var dateEl    = document.getElementById('txnDate');
     var accEl     = document.getElementById('txnAccount');
@@ -3884,7 +3757,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     var desc = (descEl ? descEl.value : '').trim();
     var rawAmt = parseFloat(amtEl ? amtEl.value : '');
-    var currency = ccyEl ? (ccyEl.value || 'CHF') : 'CHF';
     var type = activeBtn ? (activeBtn.dataset.type || 'expense') : 'expense';
     var category = catEl ? (catEl.value || 'Other') : 'Other';
     var accountStr = accEl ? (accEl.value || '') : '';
@@ -3892,13 +3764,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     if (!desc || !(rawAmt > 0)) return;
 
-    var rate = exchangeRates[currency] || 1;
-    var amountCHF = rawAmt / rate;
+    var amountHuf = Math.round(rawAmt);
     var id = 'txn_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
     var accountName = (accountStr.indexOf('::') !== -1) ? accountStr.split('::').slice(1).join('::') : '';
     var catKey = (accountStr.indexOf('::') !== -1) ? accountStr.split('::')[0] : '';
 
-    var txn = { id: id, desc: desc, amount: rawAmt, currency: currency, amountCHF: amountCHF,
+    var txn = { id: id, desc: desc, amount: amountHuf, currency: 'HUF', amountCHF: amountHuf,
                 type: type, category: category, accountStr: accountStr,
                 accountName: accountName, catKey: catKey, date: date, ts: Date.now() };
 
@@ -3906,7 +3777,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       var nwItems = storeGet('nw:' + catKey) || [];
       var idx = nwItems.findIndex(function(x) { return String(x.name) === accountName; });
       if (idx >= 0) {
-        var delta = type === 'income' ? amountCHF : -amountCHF;
+        var delta = type === 'income' ? amountHuf : -amountHuf;
         nwItems[idx].amount = (Number(nwItems[idx].amount) || 0) + delta;
         storeSet('nw:' + catKey, nwItems);
         logActivity(catKey, accountName, delta, 'edit');
@@ -3934,8 +3805,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
       var nwItems = storeGet('nw:' + txn.catKey) || [];
       var idx = nwItems.findIndex(function(x) { return String(x.name) === txn.accountName; });
       if (idx >= 0) {
-        var amtCHF = txn.amountCHF || (txn.amount / (exchangeRates[txn.currency || 'CHF'] || 1));
-        var delta = txn.type === 'income' ? -amtCHF : amtCHF;
+        var amtHuf = Math.round(Number(txn.amountCHF != null ? txn.amountCHF : txn.amount) || 0);
+        var delta = txn.type === 'income' ? -amtHuf : amtHuf;
         nwItems[idx].amount = (Number(nwItems[idx].amount) || 0) + delta;
         storeSet('nw:' + txn.catKey, nwItems);
         logActivity(txn.catKey, txn.accountName, delta, 'edit');
@@ -3949,10 +3820,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
   function txnRowHtml(t) {
     var sign = t.type === 'income' ? '+' : '−';
-    // Show the original entered amount + currency so 20 000 HUF always
-    // reads "HUF 20 000", regardless of the NW display currency.
-    var enteredAmt = Number(t.amount) || 0;
-    var enteredCcy = t.currency || 'CHF';
+    var enteredAmt = Math.round(Number(t.amount) || 0);
+    var enteredCcy = 'HUF';
     var formattedAmt = enteredCcy + ' ' + enteredAmt.toLocaleString('en-US', {
       minimumFractionDigits: enteredAmt % 1 === 0 ? 0 : 2,
       maximumFractionDigits: 2
@@ -4091,7 +3960,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (typeof initCloudSync !== 'function') return;
   initCloudSync({
     appKey: 'finance',
-    syncedKeys: ['subs', 'wishlist', 'incoming_orders', 'nw_currency', 'nw:activity', 'nw:history', 'fin:transactions'],
+    syncedKeys: ['subs', 'wishlist', 'incoming_orders', 'nw:activity', 'nw:history', 'fin:transactions'],
     syncedPrefixes: ['nw:'],
     onApplied: function () { window.dispatchEvent(new Event('storage')); }
   });
